@@ -1,0 +1,2 @@
+import { prisma } from "@/lib/prisma";
+export default async function Subs(){const subs=await prisma.substitute.findMany({orderBy:{priority:"asc"},include:{player:true}});return <main className="shell"><div className="top"><h1>Substitute Priority</h1><a href="/">Dashboard</a></div><div className="card">{subs.map(s=><div className="row" key={s.id}><b>{s.priority}. {s.player.firstName} {s.player.lastName}</b><span>{s.player.position}</span></div>)}</div></main>}
