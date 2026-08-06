@@ -74,7 +74,9 @@ export default async function Home({
     </section>
     <section className="card">
       <h2>Game Status</h2><p>{game.status}</p>
-      <form action="/api/send-availability" method="post"><button className="button primary">{game.status === "Draft" ? "SEND AVAILABILITY" : "RESEND AVAILABILITY"}</button></form>
+      {game.status === "Draft" && (
+        <form action="/api/send-availability" method="post"><button className="button primary">SEND AVAILABILITY</button></form>
+      )}
       <a href="/games/new" className="button" style={{display:"inline-block",marginTop:10,textDecoration:"none"}}>+ Create next week's game</a>
     </section>
   </main>;
