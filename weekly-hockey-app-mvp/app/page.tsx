@@ -6,21 +6,35 @@ export default async function Home() {
     include: { arena: true, availabilities: { include: { player: true } } }
   });
 
-  if (!game) return <main className="shell">
-    <header className="top"><div className="brand">🏒 Weekly Hockey</div><nav className="nav">
-      <a href="/">Dashboard</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
-      <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
-    </nav></header>
-    <section className="card hero">
-      <div style={{opacity:.75}}>WEEKLY HOCKEY</div>
-      <h1>No game scheduled</h1>
-      <p>Create this week's game to get started.</p>
-    </section>
-    <section className="card">
-      <h2>Getting started</h2>
-      <p>Add players, configure your arena/settings, then create the next weekly game.</p>
-    </section>
-  </main>;
+  if (!game) {
+    const settings = await prisma.teamSettings.findUnique({ where: { id: 1 } });
+
+    return <main className="shell">
+      <header className="top"><div className="brand">🏒 Weekly Hockey</div><nav className="nav">
+        <a href="/">Dashboard</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
+        <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
+      </nav></header>
+      <section className="card hero">
+        <div style={{opacity:.75}}>WEEKLY HOCKEY</div>
+        <h1>No game scheduled</h1>
+        <p>{settings ? "Create this week's game to get started." : "Let's get your team set up first."}</p>
+      </section>
+      <section className="card">
+        {settings ? (
+          <>
+            <h2>Getting started</h2>
+            <p>Add players, then create the next weekly game.</p>
+          </>
+        ) : (
+          <>
+            <h2>Run the setup wizard</h2>
+            <p>Set your team name, arena, and game defaults before adding players or creating a game.</p>
+            <a href="/setup" className="button primary" style={{display:"inline-block",marginTop:10,textDecoration:"none"}}>Start setup</a>
+          </>
+        )}
+      </section>
+    </main>;
+  }
 
   const playing = game.availabilities.filter(a => a.status === "Yes").length;
   const subs = game.availabilities.filter(a => a.status === "AddedAsSub").length;
