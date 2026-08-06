@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const player = await prisma.player.findFirst({ where:{mobileNumber:from,active:true} });
   if (!player) return new NextResponse("Unknown number", {status:404});
 
-  const game = await prisma.game.findFirst({orderBy:{gameDate:"asc"}});
+  const game = await prisma.game.findFirst({orderBy:{createdAt:"desc"}});
   if (!game) return new NextResponse("No active game", {status:404});
 
   const yes = ["YES","Y","YEP","YUP","IN"].includes(body);

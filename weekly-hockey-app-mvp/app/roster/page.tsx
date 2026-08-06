@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function Roster() {
- const game=await prisma.game.findFirst({orderBy:{gameDate:"asc"},include:{arena:true,availabilities:{include:{player:true}}}});
+ const game=await prisma.game.findFirst({orderBy:{createdAt:"desc"},include:{arena:true,availabilities:{include:{player:true}}}});
  if(!game)return <main className="shell"><h1>No game</h1></main>;
  const groups=[["Yes","green"],["AddedAsSub","blue"],["No","red"],["Waiting","yellow"]];
  return <main className="shell"><div className="top"><h1>Roster</h1><a href="/">Dashboard</a></div>

@@ -3,7 +3,7 @@ import { sendSms } from "@/lib/sms";
 import { NextResponse } from "next/server";
 
 export async function POST() {
-  const game = await prisma.game.findFirst({ orderBy: { gameDate: "asc" }, include: { arena: true }});
+  const game = await prisma.game.findFirst({ orderBy: { createdAt: "desc" }, include: { arena: true }});
   if (!game) return NextResponse.json({error:"No game"}, {status:404});
   const players = await prisma.player.findMany({ where: { active:true, playerType:"Regular" }});
   for (const player of players) {

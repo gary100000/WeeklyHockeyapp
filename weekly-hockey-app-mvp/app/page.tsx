@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const game = await prisma.game.findFirst({
-    orderBy: { gameDate: "asc" },
+    orderBy: { createdAt: "desc" },
     include: { arena: true, availabilities: { include: { player: true } } }
   });
 
@@ -26,6 +26,7 @@ export default async function Home() {
           <>
             <h2>Getting started</h2>
             <p>Add players, then create the next weekly game.</p>
+            <a href="/games/new" className="button primary" style={{display:"inline-block",marginTop:10,textDecoration:"none"}}>Create this week's game</a>
           </>
         ) : (
           <>
@@ -65,7 +66,8 @@ export default async function Home() {
     </section>
     <section className="card">
       <h2>Game Status</h2><p>{game.status}</p>
-      <form action="/api/send-availability" method="post"><button className="button primary">SEND AVAILABILITY</button></form>
+      <form action="/api/send-availability" method="post"><button className="button primary">{game.status === "Draft" ? "SEND AVAILABILITY" : "RESEND AVAILABILITY"}</button></form>
+      <a href="/games/new" className="button" style={{display:"inline-block",marginTop:10,textDecoration:"none"}}>+ Create next week's game</a>
     </section>
   </main>;
 }
