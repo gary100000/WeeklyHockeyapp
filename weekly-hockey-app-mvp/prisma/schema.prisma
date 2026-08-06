@@ -7,11 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum PlayerType { Regular Substitute }
-enum Position { Forward Defence Goalie }
-enum AvailabilityStatus { Waiting Yes No AddedAsSub Removed }
-enum GameStatus { Draft AvailabilityOpen FillingSubs Full Complete Cancelled }
-enum SmsDirection { Incoming Outgoing }
+enum PlayerType { 
+	Regular 
+	Substitute 
+	}
+enum Position {
+	Forward 
+	Defence 
+	Goalie
+	}
+enum AvailabilityStatus {
+	Waiting
+	Yes
+	No
+	AddedAsSub
+	Removed
+	}
+enum GameStatus { 
+	Draft 
+	AvailabilityOpen 
+	FillingSubs 
+	Full 
+	Complete 
+	Cancelled
+	}
+enum SmsDirection { 
+	Incoming 
+	Outgoing 
+	}
 
 model Player {
   id           Int      @id @default(autoincrement())
