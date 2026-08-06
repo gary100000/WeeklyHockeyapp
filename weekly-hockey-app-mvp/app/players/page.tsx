@@ -15,7 +15,7 @@ export default async function Players() {
           <a href="/players/new" className="button primary" style={{ textDecoration: "none" }}>
             + Add player
           </a>
-          <a href="/">Dashboard</a>
+          <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
         </div>
       </div>
       <div className="card">

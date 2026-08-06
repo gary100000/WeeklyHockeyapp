@@ -14,10 +14,21 @@ function nextDateForDay(dayName: string): string {
   return result.toISOString().slice(0, 10);
 }
 
+function parseTime12h(display: string): string {
+  const match = display.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
+  if (!match) return "20:00";
+  let h = parseInt(match[1], 10);
+  const m = match[2];
+  const ampm = match[3].toUpperCase();
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return `${String(h).padStart(2, "0")}:${m}`;
+}
+
 export default async function NewGame({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; copyLastWeek?: string }>;
 }) {
   const sp = await searchParams;
   const settings = await prisma.teamSettings.findUnique({
@@ -29,19 +40,51 @@ export default async function NewGame({
     redirect("/setup");
   }
 
-  const suggestedDate = nextDateForDay(settings.defaultGameDay);
+  const lastGame = await prisma.game.findFirst({ orderBy: { createdAt: "desc" } });
+  const copying = sp.copyLastWeek === "1" && !!lastGame;
+
+  let suggestedDate = nextDateForDay(settings.defaultGameDay);
+  let suggestedTime = settings.defaultGameTime;
+  let suggestedMax = settings.maximumPlayers;
+  let suggestedGoalies = settings.goalieRequirement;
+
+  if (copying && lastGame) {
+    const nextWeek = new Date(lastGame.gameDate);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    suggestedDate = nextWeek.toISOString().slice(0, 10);
+    suggestedTime = parseTime12h(lastGame.gameTime);
+    suggestedMax = lastGame.maximumPlayers;
+    suggestedGoalies = lastGame.goalieRequirement;
+  }
 
   return (
     <main className="shell">
       <div className="top">
         <h1>Create Game</h1>
-        <a href="/">Dashboard</a>
+        <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">
         {sp.error && <p className="red">{sp.error}</p>}
         <p style={{ marginTop: -4, marginBottom: 14, opacity: 0.75, fontSize: 14 }}>
           Arena: {settings.arena?.name} · {settings.arena?.address}
         </p>
+
+        {lastGame && !copying && (
+          <a
+            href="/games/new?copyLastWeek=1"
+            className="button"
+            style={{ display: "inline-block", marginBottom: 14, textDecoration: "none" }}
+          >
+            ↻ Copy last week&apos;s settings
+          </a>
+        )}
+        {copying && lastGame && (
+          <p style={{ fontSize: 13, opacity: 0.75, marginBottom: 14 }}>
+            Prefilled from {lastGame.gameDate.toLocaleDateString("en-CA")} — {lastGame.gameTime},{" "}
+            {lastGame.maximumPlayers} players, {lastGame.goalieRequirement} goalies. Adjust below if needed.
+          </p>
+        )}
+
         <form action="/api/games" method="post">
           <label>Game date</label>
           <input className="input" type="date" name="gameDate" defaultValue={suggestedDate} required />
@@ -51,7 +94,7 @@ export default async function NewGame({
             className="input"
             type="time"
             name="gameTime"
-            defaultValue={settings.defaultGameTime}
+            defaultValue={suggestedTime}
             required
           />
 
@@ -61,7 +104,7 @@ export default async function NewGame({
             type="number"
             min={1}
             name="maximumPlayers"
-            defaultValue={settings.maximumPlayers}
+            defaultValue={suggestedMax}
             required
           />
 
@@ -71,7 +114,7 @@ export default async function NewGame({
             type="number"
             min={0}
             name="goalieRequirement"
-            defaultValue={settings.goalieRequirement}
+            defaultValue={suggestedGoalies}
             required
           />
 

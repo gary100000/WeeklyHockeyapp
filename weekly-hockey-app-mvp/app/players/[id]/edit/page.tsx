@@ -19,7 +19,7 @@ export default async function EditPlayer({
     <main className="shell">
       <div className="top">
         <h1>Edit Player</h1>
-        <a href="/players">Players</a>
+        <a href="/players" className="button" style={{ textDecoration: "none" }}>Players</a>
       </div>
       <div className="card">
         {sp.error && <p className="red">{sp.error}</p>}

@@ -9,7 +9,7 @@ export default async function Settings() {
     <main className="shell">
       <div className="top">
         <h1>Settings</h1>
-        <a href="/">Dashboard</a>
+        <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">
         {s ? (

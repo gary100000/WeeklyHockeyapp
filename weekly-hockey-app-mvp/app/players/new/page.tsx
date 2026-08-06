@@ -9,7 +9,7 @@ export default async function NewPlayer({
     <main className="shell">
       <div className="top">
         <h1>Add Player</h1>
-        <a href="/players">Players</a>
+        <a href="/players" className="button" style={{ textDecoration: "none" }}>Players</a>
       </div>
       <div className="card">
         {sp.error && <p className="red">{sp.error}</p>}
