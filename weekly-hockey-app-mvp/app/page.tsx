@@ -6,7 +6,20 @@ export default async function Home() {
     include: { arena: true, availabilities: { include: { player: true } } }
   });
 
-  if (!game) return <main className="shell"><h1>Weekly Hockey</h1><div className="card"><h2>No game created</h2><p>Create the first weekly game to get started.</p></div></main>;
+  if (!game) return <main className="shell">
+    <header className="top"><div className="brand">🏒 Weekly Hockey</div><nav className="nav">
+      <a href="/">Dashboard</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
+    </nav></header>
+    <section className="card hero">
+      <div style={{opacity:.75}}>WEEKLY HOCKEY</div>
+      <h1>No game scheduled</h1>
+      <p>Create this week's game to get started.</p>
+    </section>
+    <section className="card">
+      <h2>Getting started</h2>
+      <p>Add players, configure your arena/settings, then create the next weekly game.</p>
+    </section>
+  </main>;
 
   const playing = game.availabilities.filter(a => a.status === "Yes").length;
   const subs = game.availabilities.filter(a => a.status === "AddedAsSub").length;

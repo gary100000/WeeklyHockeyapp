@@ -19,3 +19,9 @@ Next.js, TypeScript, PostgreSQL, Prisma, Twilio.
 Before production deployment, add a real admin authentication provider, Twilio signature validation, rate limiting, scheduled reminder/deadline jobs, audit logging, and managed database backups.
 
 The substitute engine intentionally contacts only one substitute at a time and waits for the response before moving to the next.
+
+## Production database
+After setting `DATABASE_URL` in Vercel, run:
+`npx prisma migrate deploy`
+
+The dashboard safely handles an empty database and shows a setup screen when no game exists.
