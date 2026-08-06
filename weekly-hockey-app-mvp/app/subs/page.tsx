@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import SubsPriorityList from "@/components/SubsPriorityList";
 
+export const dynamic = "force-dynamic";
+
 export default async function Subs() {
   const subs = await prisma.substitute.findMany({
     orderBy: { priority: "asc" },

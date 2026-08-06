@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function Players() {
   const players = await prisma.player.findMany({
     orderBy: [{ active: "desc" }, { lastName: "asc" }],

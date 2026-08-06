@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const game = await prisma.game.findFirst({
     orderBy: { gameDate: "asc" },

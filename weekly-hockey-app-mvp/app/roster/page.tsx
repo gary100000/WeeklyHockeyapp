@@ -1,4 +1,7 @@
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
 export default async function Roster() {
  const game=await prisma.game.findFirst({orderBy:{gameDate:"asc"},include:{arena:true,availabilities:{include:{player:true}}}});
  if(!game)return <main className="shell"><h1>No game</h1></main>;

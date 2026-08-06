@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import SetupWizard from "@/components/SetupWizard";
 
+export const dynamic = "force-dynamic";
+
 export default async function SetupPage() {
   const settings = await prisma.teamSettings.findUnique({
     where: { id: 1 },
