@@ -1,2 +1,0 @@
-import { prisma } from "@/lib/prisma";
-export default async function Settings(){const s=await prisma.teamSettings.findUnique({where:{id:1},include:{arena:true}});return <main className="shell"><div className="top"><h1>Settings</h1><a href="/">Dashboard</a></div><div className="card">{s?<><h2>{s.teamName}</h2><p>Arena: {s.arena?.name}</p><p>Maximum players: {s.maximumPlayers}</p><p>Goalies required: {s.goalieRequirement}</p><p>Deadline: {s.responseDeadline}</p></>:<p>Run the database seed/setup before using settings.</p>}</div></main>}
