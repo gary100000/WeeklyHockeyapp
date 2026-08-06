@@ -1,0 +1,2 @@
+import { prisma } from "@/lib/prisma";
+export default async function Players(){const players=await prisma.player.findMany({orderBy:[{active:"desc"},{lastName:"asc"}]});return <main className="shell"><div className="top"><h1>Players</h1><a href="/">Dashboard</a></div><div className="card">{players.map(p=><div className="row" key={p.id}><div><b>{p.firstName} {p.lastName}</b><div>{p.position} · {p.playerType}</div></div><span>{p.active?"Active":"Inactive"}</span></div>)}</div></main>}
