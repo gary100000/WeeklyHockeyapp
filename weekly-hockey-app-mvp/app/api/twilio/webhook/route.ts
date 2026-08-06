@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     await prisma.game.update({where:{id:game.id},data:{status:"Full"}});
   } else if (player.playerType === "Substitute" && no) {
     await fillNextSub(game.id);
-  } else if (player.playerType === "Regular" && yes === true) {
+  } else if (player.playerType === "Regular" && (yes || no)) {
     await fillNextSub(game.id);
   }
   return new NextResponse("OK");

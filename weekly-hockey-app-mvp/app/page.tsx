@@ -9,6 +9,7 @@ export default async function Home() {
   if (!game) return <main className="shell">
     <header className="top"><div className="brand">🏒 Weekly Hockey</div><nav className="nav">
       <a href="/">Dashboard</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
+      <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
     </nav></header>
     <section className="card hero">
       <div style={{opacity:.75}}>WEEKLY HOCKEY</div>
@@ -29,6 +30,7 @@ export default async function Home() {
   return <main className="shell">
     <header className="top"><div className="brand">🏒 Weekly Hockey</div><nav className="nav">
       <a href="/">Dashboard</a><a href="/roster">Roster</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
+      <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
     </nav></header>
     <section className="card hero">
       <div style={{opacity:.75}}>NEXT GAME</div>
