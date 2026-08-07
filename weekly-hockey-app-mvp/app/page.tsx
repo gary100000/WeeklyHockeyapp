@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -58,10 +59,15 @@ export default async function Home({
     {sp.smsError && <section className="card" style={{borderColor:"var(--goal-red)"}}><p className="red" style={{margin:0}}>⚠️ {sp.smsError}</p></section>}
     {sp.smsSent && <section className="card" style={{borderColor:"var(--confirmed-green)"}}><p className="green" style={{margin:0}}>✅ Sent to {sp.smsSent} player{sp.smsSent === "1" ? "" : "s"}.</p></section>}
     <section className="card hero">
-      <div style={{opacity:.75}}>NEXT GAME</div>
-      <h1>{game.gameDate.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</h1>
-      <h2>{game.gameTime} · {game.arena.name}</h2>
-      <div>{game.arena.address}</div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+        <div style={{flex:"1 1 220px",minWidth:0}}>
+          <div style={{opacity:.75}}>NEXT GAME</div>
+          <h1>{game.gameDate.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</h1>
+          <h2>{game.gameTime} · {game.arena.name}</h2>
+          <div>{game.arena.address}</div>
+        </div>
+        <Image src="/logo.png" alt="Team logo" width={84} height={84} style={{flexShrink:0}} priority />
+      </div>
     </section>
     <section className="card">
       <h2>Roster {playing + subs} / {game.maximumPlayers}</h2>
