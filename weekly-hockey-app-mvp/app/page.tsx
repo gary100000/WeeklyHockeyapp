@@ -55,8 +55,8 @@ export default async function Home({
       <a href="/">Dashboard</a><a href="/roster">Roster</a><a href="/players">Players</a><a href="/subs">Subs</a><a href="/settings">Settings</a>
       <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
     </nav></header>
-    {sp.smsError && <section className="card" style={{borderColor:"#f87171"}}><p className="red" style={{margin:0}}>⚠️ {sp.smsError}</p></section>}
-    {sp.smsSent && <section className="card" style={{borderColor:"#4ade80"}}><p className="green" style={{margin:0}}>✅ Sent to {sp.smsSent} player{sp.smsSent === "1" ? "" : "s"}.</p></section>}
+    {sp.smsError && <section className="card" style={{borderColor:"var(--goal-red)"}}><p className="red" style={{margin:0}}>⚠️ {sp.smsError}</p></section>}
+    {sp.smsSent && <section className="card" style={{borderColor:"var(--confirmed-green)"}}><p className="green" style={{margin:0}}>✅ Sent to {sp.smsSent} player{sp.smsSent === "1" ? "" : "s"}.</p></section>}
     <section className="card hero">
       <div style={{opacity:.75}}>NEXT GAME</div>
       <h1>{game.gameDate.toLocaleDateString("en-CA",{weekday:"long",month:"long",day:"numeric"})}</h1>

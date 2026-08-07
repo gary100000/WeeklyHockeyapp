@@ -166,10 +166,13 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
                 textAlign: "center",
                 padding: "6px 4px",
                 borderRadius: 8,
-                background: i === step ? "#111827" : i < step ? "#d1fae5" : "#f1f5f9",
-                color: i === step ? "#fff" : "#111827",
+                background: i === step ? "var(--rink-navy)" : i < step ? "var(--frost)" : "#f4f6f8",
+                color: i === step ? "#fff" : "var(--rink-navy)",
                 fontSize: 12,
                 fontWeight: 700,
+                fontFamily: "var(--font-display, Arial, sans-serif)",
+                textTransform: "uppercase",
+                letterSpacing: "0.02em",
               }}
             >
               {i + 1}. {label}

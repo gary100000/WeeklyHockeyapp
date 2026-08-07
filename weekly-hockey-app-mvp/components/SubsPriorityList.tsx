@@ -102,7 +102,7 @@ export default function SubsPriorityList({ initialSubs }: { initialSubs: Sub[] }
   return (
     <>
       {error && (
-        <div className="card" style={{ borderColor: "#f87171" }}>
+        <div className="card" style={{ borderColor: "var(--goal-red)" }}>
           <p className="red" style={{ margin: 0 }}>{error}</p>
         </div>
       )}

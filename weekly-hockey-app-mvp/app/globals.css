@@ -1,3 +1,241 @@
-*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:#17202a;font-family:Arial,Helvetica,sans-serif}.shell{max-width:1100px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.brand{font-size:22px;font-weight:800}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a{padding:9px 12px;border-radius:9px;background:white;color:#17202a;text-decoration:none;border:1px solid #e3e7eb}.card{background:#fff;border:1px solid #e3e7eb;border-radius:14px;padding:18px;margin-bottom:16px}.hero{background:#111827;color:#fff}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:14px;background:#f8fafc;border-radius:10px}.big{font-size:28px;font-weight:800}.button{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:#111827;color:#fff}.danger{background:#fee2e2;color:#991b1b}.green{color:#15803d}.red{color:#b91c1c}.yellow{color:#a16207}.blue{color:#1d4ed8}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
-.input{width:100%;padding:12px;border-radius:10px;border:1px solid #e3e7eb;font-size:16px;margin-bottom:12px}
-label{display:block;font-size:13px;font-weight:700;margin:10px 0 4px;color:#475569}@media(max-width:700px){.shell{padding:12px}.grid{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start;flex-direction:column;gap:10px}.row{align-items:flex-start;flex-direction:column}}
+:root {
+  --ice: #F5F9FC;
+  --rink-navy: #0E2A47;
+  --rink-navy-soft: #163A5F;
+  --blue-line: #1C5FA8;
+  --goal-red: #C8203A;
+  --frost: #E4EEF6;
+  --brass: #B98A3D;
+  --ink: #0E1B2A;
+  --ink-muted: #55708A;
+  --confirmed-green: #1E7A4C;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ice);
+  color: var(--ink);
+  font-family: var(--font-body, "Segoe UI", Arial, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0 0 6px;
+  color: var(--rink-navy);
+}
+
+h1 { font-size: 26px; text-transform: uppercase; letter-spacing: 0.02em; }
+h2 { font-size: 18px; }
+h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+p { line-height: 1.5; }
+
+.shell { max-width: 1100px; margin: auto; padding: 24px 20px 60px; }
+
+/* Page header row — carries a blue-line / red-line accent underneath,
+   a nod to a rink's blue line and center red line, on every page. */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--blue-line);
+  position: relative;
+}
+.top::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 56px;
+  height: 3px;
+  background: var(--goal-red);
+}
+
+.brand {
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--rink-navy);
+}
+
+.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav a {
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--rink-navy);
+  text-decoration: none;
+  border: 1px solid var(--frost);
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.nav a:hover { background: var(--blue-line); color: #fff; border-color: var(--blue-line); }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--frost);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(14, 42, 71, 0.04);
+}
+
+.hero {
+  background: linear-gradient(160deg, var(--rink-navy) 0%, var(--rink-navy-soft) 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1, .hero h2 { color: #fff; }
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+  pointer-events: none;
+}
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat {
+  padding: 14px;
+  background: var(--ice);
+  border: 1px solid var(--frost);
+  border-radius: 12px;
+  text-align: center;
+}
+.stat > div:first-child {
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin-bottom: 2px;
+}
+
+/* Signature: scoreboard-style numerals for every roster count in the app. */
+.big {
+  font-family: var(--font-mono, "Courier New", monospace);
+  font-size: 30px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.hero .big {
+  text-shadow: 0 0 18px currentColor;
+}
+
+.button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  background: #fff;
+  color: var(--rink-navy);
+  border: 1px solid var(--frost);
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+.button:hover { filter: brightness(0.97); }
+.button:active { transform: translateY(1px); }
+.button:focus-visible {
+  outline: 3px solid var(--blue-line);
+  outline-offset: 2px;
+}
+
+.primary { background: var(--blue-line); color: #fff; border-color: var(--blue-line); }
+.primary:hover { filter: brightness(1.08); }
+
+.danger { background: #FBE4E7; color: #8E1526; border-color: #F3C3C9; }
+
+.green { color: var(--confirmed-green); }
+.red { color: var(--goal-red); }
+.yellow { color: var(--brass); }
+.blue { color: var(--blue-line); }
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--frost);
+}
+.row:last-child { border-bottom: none; }
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--frost);
+  font-size: 16px;
+  font-family: var(--font-body, "Segoe UI", Arial, sans-serif);
+  margin-bottom: 12px;
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--blue-line);
+  box-shadow: 0 0 0 3px rgba(28, 95, 168, 0.15);
+}
+
+label {
+  display: block;
+  font-family: var(--font-display, "Arial Narrow", Arial, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 12px 0 5px;
+  color: var(--ink-muted);
+}
+
+code {
+  font-family: var(--font-mono, "Courier New", monospace);
+  background: var(--frost);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media (max-width: 700px) {
+  .shell { padding: 16px 14px 48px; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .top { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .row { align-items: flex-start; flex-direction: column; }
+  .big { font-size: 26px; }
+}
