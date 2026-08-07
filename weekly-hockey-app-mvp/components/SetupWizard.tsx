@@ -26,6 +26,11 @@ type FormState = {
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const STEPS = ["Team", "Arena", "Game defaults", "Sub rules", "Response rules", "Review"];
 
+function parseHours(value: string, fallback: number): number {
+  const match = value.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : fallback;
+}
+
 const DEFAULTS: FormState = {
   teamName: "",
   adminName: "",
@@ -328,20 +333,87 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
         {step === 4 && (
           <section>
             <h2>Response rules</h2>
+
             <label>Response deadline</label>
-            <input
-              className="input"
-              value={form.responseDeadline}
-              onChange={(e) => update("responseDeadline", e.target.value)}
-              placeholder="e.g. 24 hours before game"
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+              <button
+                type="button"
+                className="button"
+                style={{ padding: "10px 16px" }}
+                onClick={() => {
+                  const hours = Math.max(1, parseHours(form.responseDeadline, 24) - 1);
+                  update("responseDeadline", `${hours} hours before game`);
+                }}
+                aria-label="Decrease response deadline"
+              >
+                −
+              </button>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono, monospace)",
+                  fontSize: 22,
+                  fontWeight: 700,
+                  minWidth: 60,
+                  textAlign: "center",
+                }}
+              >
+                {parseHours(form.responseDeadline, 24)}h
+              </div>
+              <button
+                type="button"
+                className="button"
+                style={{ padding: "10px 16px" }}
+                onClick={() => {
+                  const hours = Math.min(336, parseHours(form.responseDeadline, 24) + 1);
+                  update("responseDeadline", `${hours} hours before game`);
+                }}
+                aria-label="Increase response deadline"
+              >
+                +
+              </button>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>hours before game</span>
+            </div>
+
             <label>Reminder time</label>
-            <input
-              className="input"
-              value={form.reminderTime}
-              onChange={(e) => update("reminderTime", e.target.value)}
-              placeholder="e.g. 48 hours before game"
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              <button
+                type="button"
+                className="button"
+                style={{ padding: "10px 16px" }}
+                onClick={() => {
+                  const hours = Math.max(1, parseHours(form.reminderTime, 48) - 1);
+                  update("reminderTime", `${hours} hours before game`);
+                }}
+                aria-label="Decrease reminder time"
+              >
+                −
+              </button>
+              <div
+                style={{
+                  fontFamily: "var(--font-mono, monospace)",
+                  fontSize: 22,
+                  fontWeight: 700,
+                  minWidth: 60,
+                  textAlign: "center",
+                }}
+              >
+                {parseHours(form.reminderTime, 48)}h
+              </div>
+              <button
+                type="button"
+                className="button"
+                style={{ padding: "10px 16px" }}
+                onClick={() => {
+                  const hours = Math.min(336, parseHours(form.reminderTime, 48) + 1);
+                  update("reminderTime", `${hours} hours before game`);
+                }}
+                aria-label="Increase reminder time"
+              >
+                +
+              </button>
+              <span style={{ fontSize: 13, opacity: 0.7 }}>hours before game</span>
+            </div>
+
             <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
               <input
                 type="checkbox"
