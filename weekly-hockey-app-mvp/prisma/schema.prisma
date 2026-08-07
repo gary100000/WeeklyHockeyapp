@@ -74,35 +74,43 @@ model Arena {
 }
 
 model TeamSettings {
-  id                   Int     @id @default(1)
-  teamName             String
-  defaultGameDay       String
-  defaultGameTime      String
-  maximumPlayers       Int
-  goalieRequirement    Int
-  defenceRequirement   Int     @default(0)
-  forwardRequirement   Int     @default(0)
-  responseDeadline     String
-  reminderTime         String
-  finalDeadlineTreatNo Boolean @default(false)
-  adminName            String
-  adminMobileNumber    String
+  id                      Int     @id @default(1)
+  teamName                String
+  defaultGameDay          String
+  defaultGameTime         String
+  maximumPlayers          Int
+  goalieRequirement       Int
+  defenceRequirement      Int     @default(0)
+  forwardRequirement      Int     @default(0)
+  defenceDeclineThreshold Int     @default(2)
+  defenceMaxWithSubs      Int     @default(8)
+  forwardDeclineThreshold Int     @default(4)
+  forwardMaxWithSubs      Int     @default(14)
+  responseDeadline        String
+  reminderTime            String
+  finalDeadlineTreatNo    Boolean @default(false)
+  adminName               String
+  adminMobileNumber       String
 
   arenaId Int?
   arena   Arena? @relation(fields: [arenaId], references: [id])
 }
 
 model Game {
-  id                 Int        @id @default(autoincrement())
-  gameDate           DateTime
-  gameTime           String
-  arenaId            Int
-  maximumPlayers     Int
-  goalieRequirement  Int
-  defenceRequirement Int        @default(0)
-  forwardRequirement Int        @default(0)
-  status             GameStatus @default(Draft)
-  createdAt          DateTime   @default(now())
+  id                      Int        @id @default(autoincrement())
+  gameDate                DateTime
+  gameTime                String
+  arenaId                 Int
+  maximumPlayers          Int
+  goalieRequirement       Int
+  defenceRequirement      Int        @default(0)
+  forwardRequirement      Int        @default(0)
+  defenceDeclineThreshold Int        @default(2)
+  defenceMaxWithSubs      Int        @default(8)
+  forwardDeclineThreshold Int        @default(4)
+  forwardMaxWithSubs      Int        @default(14)
+  status                  GameStatus @default(Draft)
+  createdAt               DateTime   @default(now())
 
   arena          Arena              @relation(fields: [arenaId], references: [id])
   availabilities GameAvailability[]

@@ -48,6 +48,10 @@ export default async function NewGame({
   let suggestedGoalies = settings.goalieRequirement;
   let suggestedDefence = settings.defenceRequirement;
   let suggestedForward = settings.forwardRequirement;
+  let suggestedDefenceThreshold = settings.defenceDeclineThreshold;
+  let suggestedDefenceMax = settings.defenceMaxWithSubs;
+  let suggestedForwardThreshold = settings.forwardDeclineThreshold;
+  let suggestedForwardMax = settings.forwardMaxWithSubs;
 
   if (copying && lastGame) {
     const nextWeek = new Date(lastGame.gameDate);
@@ -57,6 +61,10 @@ export default async function NewGame({
     suggestedGoalies = lastGame.goalieRequirement;
     suggestedDefence = lastGame.defenceRequirement;
     suggestedForward = lastGame.forwardRequirement;
+    suggestedDefenceThreshold = lastGame.defenceDeclineThreshold;
+    suggestedDefenceMax = lastGame.defenceMaxWithSubs;
+    suggestedForwardThreshold = lastGame.forwardDeclineThreshold;
+    suggestedForwardMax = lastGame.forwardMaxWithSubs;
   }
 
   return (
@@ -128,6 +136,50 @@ export default async function NewGame({
             min={0}
             name="forwardRequirement"
             defaultValue={suggestedForward}
+            required
+          />
+
+          <p style={{ fontSize: 13, fontWeight: 700, marginTop: 18, marginBottom: 4 }}>Sub rules</p>
+          <p style={{ fontSize: 13, opacity: 0.75, marginTop: 0, marginBottom: 10 }}>
+            Subs only get contacted once the decline threshold is crossed, then filling continues up
+            to the max total for that position. Max totals can&apos;t exceed the required numbers above.
+          </p>
+
+          <label>Defence: start texting subs after this many decline</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="defenceDeclineThreshold"
+            defaultValue={suggestedDefenceThreshold}
+            required
+          />
+          <label>Defence: max total once subs are involved</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="defenceMaxWithSubs"
+            defaultValue={suggestedDefenceMax}
+            required
+          />
+
+          <label>Forwards: start texting subs after this many decline</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="forwardDeclineThreshold"
+            defaultValue={suggestedForwardThreshold}
+            required
+          />
+          <label>Forwards: max total once subs are involved</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="forwardMaxWithSubs"
+            defaultValue={suggestedForwardMax}
             required
           />
 

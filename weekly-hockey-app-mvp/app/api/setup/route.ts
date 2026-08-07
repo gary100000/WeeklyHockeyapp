@@ -13,6 +13,10 @@ const setupSchema = z.object({
   goalieRequirement: z.coerce.number().int().min(0),
   defenceRequirement: z.coerce.number().int().min(0),
   forwardRequirement: z.coerce.number().int().min(0),
+  defenceDeclineThreshold: z.coerce.number().int().min(0),
+  defenceMaxWithSubs: z.coerce.number().int().min(0),
+  forwardDeclineThreshold: z.coerce.number().int().min(0),
+  forwardMaxWithSubs: z.coerce.number().int().min(0),
   responseDeadline: z.string().min(1),
   reminderTime: z.string().min(1),
   finalDeadlineTreatNo: z.boolean(),
@@ -36,6 +40,18 @@ export async function POST(req: Request) {
   if (totalPlayers <= 0) {
     return NextResponse.json(
       { error: "Total roster size must be greater than zero." },
+      { status: 400 }
+    );
+  }
+  if (data.defenceMaxWithSubs > data.defenceRequirement) {
+    return NextResponse.json(
+      { error: "Defence max with subs can't be higher than Defence required." },
+      { status: 400 }
+    );
+  }
+  if (data.forwardMaxWithSubs > data.forwardRequirement) {
+    return NextResponse.json(
+      { error: "Forwards max with subs can't be higher than Forwards required." },
       { status: 400 }
     );
   }
@@ -63,6 +79,10 @@ export async function POST(req: Request) {
     goalieRequirement: data.goalieRequirement,
     defenceRequirement: data.defenceRequirement,
     forwardRequirement: data.forwardRequirement,
+    defenceDeclineThreshold: data.defenceDeclineThreshold,
+    defenceMaxWithSubs: data.defenceMaxWithSubs,
+    forwardDeclineThreshold: data.forwardDeclineThreshold,
+    forwardMaxWithSubs: data.forwardMaxWithSubs,
     responseDeadline: data.responseDeadline,
     reminderTime: data.reminderTime,
     finalDeadlineTreatNo: data.finalDeadlineTreatNo,

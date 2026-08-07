@@ -8,6 +8,10 @@ const gameSchema = z.object({
   goalieRequirement: z.coerce.number().int().min(0),
   defenceRequirement: z.coerce.number().int().min(0),
   forwardRequirement: z.coerce.number().int().min(0),
+  defenceDeclineThreshold: z.coerce.number().int().min(0),
+  defenceMaxWithSubs: z.coerce.number().int().min(0),
+  forwardDeclineThreshold: z.coerce.number().int().min(0),
+  forwardMaxWithSubs: z.coerce.number().int().min(0),
 });
 
 function formatTime12h(hhmm: string) {
@@ -27,6 +31,10 @@ export async function POST(req: Request) {
     goalieRequirement: form.get("goalieRequirement"),
     defenceRequirement: form.get("defenceRequirement"),
     forwardRequirement: form.get("forwardRequirement"),
+    defenceDeclineThreshold: form.get("defenceDeclineThreshold"),
+    defenceMaxWithSubs: form.get("defenceMaxWithSubs"),
+    forwardDeclineThreshold: form.get("forwardDeclineThreshold"),
+    forwardMaxWithSubs: form.get("forwardMaxWithSubs"),
   });
 
   if (!parsed.success) {
@@ -38,6 +46,14 @@ export async function POST(req: Request) {
   const totalPlayers = data.goalieRequirement + data.defenceRequirement + data.forwardRequirement;
   if (totalPlayers <= 0) {
     const message = encodeURIComponent("Total roster size must be greater than zero.");
+    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+  }
+  if (data.defenceMaxWithSubs > data.defenceRequirement) {
+    const message = encodeURIComponent("Defence max with subs can't be higher than Defence required.");
+    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+  }
+  if (data.forwardMaxWithSubs > data.forwardRequirement) {
+    const message = encodeURIComponent("Forwards max with subs can't be higher than Forwards required.");
     return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
   }
 
@@ -55,6 +71,10 @@ export async function POST(req: Request) {
       goalieRequirement: data.goalieRequirement,
       defenceRequirement: data.defenceRequirement,
       forwardRequirement: data.forwardRequirement,
+      defenceDeclineThreshold: data.defenceDeclineThreshold,
+      defenceMaxWithSubs: data.defenceMaxWithSubs,
+      forwardDeclineThreshold: data.forwardDeclineThreshold,
+      forwardMaxWithSubs: data.forwardMaxWithSubs,
       status: "Draft",
     },
   });

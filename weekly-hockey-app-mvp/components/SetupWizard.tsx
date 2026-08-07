@@ -14,13 +14,17 @@ type FormState = {
   goalieRequirement: string;
   defenceRequirement: string;
   forwardRequirement: string;
+  defenceDeclineThreshold: string;
+  defenceMaxWithSubs: string;
+  forwardDeclineThreshold: string;
+  forwardMaxWithSubs: string;
   responseDeadline: string;
   reminderTime: string;
   finalDeadlineTreatNo: boolean;
 };
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const STEPS = ["Team", "Arena", "Game defaults", "Response rules", "Review"];
+const STEPS = ["Team", "Arena", "Game defaults", "Sub rules", "Response rules", "Review"];
 
 const DEFAULTS: FormState = {
   teamName: "",
@@ -31,8 +35,12 @@ const DEFAULTS: FormState = {
   defaultGameDay: "Wednesday",
   defaultGameTime: "20:00",
   goalieRequirement: "1",
-  defenceRequirement: "6",
-  forwardRequirement: "11",
+  defenceRequirement: "8",
+  forwardRequirement: "14",
+  defenceDeclineThreshold: "2",
+  defenceMaxWithSubs: "8",
+  forwardDeclineThreshold: "4",
+  forwardMaxWithSubs: "14",
   responseDeadline: "24 hours before game",
   reminderTime: "48 hours before game",
   finalDeadlineTreatNo: true,
@@ -52,23 +60,55 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
   const totalPlayers =
     (Number(form.goalieRequirement) || 0) + (Number(form.defenceRequirement) || 0) + (Number(form.forwardRequirement) || 0);
 
-  function validateStep(i: number) {
-    if (i === 0) return form.teamName.trim() && form.adminName.trim() && form.adminMobileNumber.trim();
-    if (i === 1) return form.arenaName.trim() && form.arenaAddress.trim();
-    if (i === 2)
-      return (
-        Number(form.goalieRequirement) >= 0 &&
-        Number(form.defenceRequirement) >= 0 &&
-        Number(form.forwardRequirement) >= 0 &&
-        totalPlayers > 0
-      );
-    if (i === 3) return form.responseDeadline.trim() && form.reminderTime.trim();
-    return true;
+  function stepError(i: number): string | null {
+    if (i === 0) {
+      if (!form.teamName.trim() || !form.adminName.trim() || !form.adminMobileNumber.trim()) {
+        return "Please fill in all fields on this step before continuing.";
+      }
+      return null;
+    }
+    if (i === 1) {
+      if (!form.arenaName.trim() || !form.arenaAddress.trim()) {
+        return "Please fill in all fields on this step before continuing.";
+      }
+      return null;
+    }
+    if (i === 2) {
+      if (Number(form.goalieRequirement) < 0 || Number(form.defenceRequirement) < 0 || Number(form.forwardRequirement) < 0 || totalPlayers <= 0) {
+        return "Please fill in all fields on this step before continuing.";
+      }
+      return null;
+    }
+    if (i === 3) {
+      if (
+        Number(form.defenceDeclineThreshold) < 0 ||
+        Number(form.defenceMaxWithSubs) < 0 ||
+        Number(form.forwardDeclineThreshold) < 0 ||
+        Number(form.forwardMaxWithSubs) < 0
+      ) {
+        return "Please fill in all fields on this step before continuing.";
+      }
+      if (Number(form.defenceMaxWithSubs) > Number(form.defenceRequirement)) {
+        return `Defence max with subs (${form.defenceMaxWithSubs}) can't be higher than Defence required (${form.defenceRequirement}).`;
+      }
+      if (Number(form.forwardMaxWithSubs) > Number(form.forwardRequirement)) {
+        return `Forwards max with subs (${form.forwardMaxWithSubs}) can't be higher than Forwards required (${form.forwardRequirement}).`;
+      }
+      return null;
+    }
+    if (i === 4) {
+      if (!form.responseDeadline.trim() || !form.reminderTime.trim()) {
+        return "Please fill in all fields on this step before continuing.";
+      }
+      return null;
+    }
+    return null;
   }
 
   function next() {
-    if (!validateStep(step)) {
-      setError("Please fill in all fields on this step before continuing.");
+    const message = stepError(step);
+    if (message) {
+      setError(message);
       return;
     }
     setError(null);
@@ -80,6 +120,15 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
   }
 
   async function submit() {
+    for (let i = 0; i < STEPS.length - 1; i++) {
+      const message = stepError(i);
+      if (message) {
+        setError(message);
+        setStep(i);
+        return;
+      }
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -229,6 +278,52 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
 
         {step === 3 && (
           <section>
+            <h2>Sub rules</h2>
+            <p style={{ fontSize: 13, opacity: 0.75, marginTop: -4, marginBottom: 14 }}>
+              Controls when the app starts texting substitutes. A single decline is tolerated —
+              subs only get contacted once the threshold below is crossed, then filling continues
+              up to the max total for that position. Max totals can&apos;t exceed the required
+              numbers from the previous step.
+            </p>
+
+            <label>Defence: start texting subs after this many decline</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.defenceDeclineThreshold}
+              onChange={(e) => update("defenceDeclineThreshold", e.target.value)}
+            />
+            <label>Defence: max total once subs are involved</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.defenceMaxWithSubs}
+              onChange={(e) => update("defenceMaxWithSubs", e.target.value)}
+            />
+
+            <label>Forwards: start texting subs after this many decline</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.forwardDeclineThreshold}
+              onChange={(e) => update("forwardDeclineThreshold", e.target.value)}
+            />
+            <label>Forwards: max total once subs are involved</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.forwardMaxWithSubs}
+              onChange={(e) => update("forwardMaxWithSubs", e.target.value)}
+            />
+          </section>
+        )}
+
+        {step === 4 && (
+          <section>
             <h2>Response rules</h2>
             <label>Response deadline</label>
             <input
@@ -255,7 +350,7 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
           </section>
         )}
 
-        {step === 4 && (
+        {step === 5 && (
           <section>
             <h2>Review</h2>
             <div className="row"><span>Team</span><b>{form.teamName || "—"}</b></div>
@@ -267,6 +362,8 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
             <div className="row"><span>Defence required</span><b>{form.defenceRequirement}</b></div>
             <div className="row"><span>Forwards required</span><b>{form.forwardRequirement}</b></div>
             <div className="row"><span>Total roster size</span><b>{totalPlayers}</b></div>
+            <div className="row"><span>Defence sub threshold</span><b>{form.defenceDeclineThreshold} decline(s) → up to {form.defenceMaxWithSubs} total</b></div>
+            <div className="row"><span>Forward sub threshold</span><b>{form.forwardDeclineThreshold} decline(s) → up to {form.forwardMaxWithSubs} total</b></div>
             <div className="row"><span>Response deadline</span><b>{form.responseDeadline}</b></div>
             <div className="row"><span>Reminder</span><b>{form.reminderTime}</b></div>
             <div className="row"><span>No-response treated as No</span><b>{form.finalDeadlineTreatNo ? "Yes" : "No"}</b></div>

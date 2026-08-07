@@ -47,11 +47,22 @@ async function contactCandidate(
 type Position = "Goalie" | "Defence" | "Forward";
 
 /**
- * Re-checks the current roster against the game's per-position targets and, if a
- * position is short, texts the next available substitute for that exact position —
- * a departing defenceman is only ever backfilled by a substitute defenceman, etc.
- * Safe to call after any status change: it's a no-op (and marks the game Full) once
- * every position is covered.
+ * Re-checks the current roster against the game's rules and, if a position needs
+ * a substitute, texts the next available substitute for that exact position.
+ *
+ * Goalies: simple target. As soon as confirmed goalies < goalieRequirement, a
+ * goalie sub gets contacted.
+ *
+ * Defence and Forward: tolerance-based. A sub for that position is only ever
+ * contacted once at least `<position>DeclineThreshold` REGULAR players of that
+ * position have said No — a single decline is tolerated and doesn't trigger any
+ * texts. Once that threshold is crossed, filling continues up to
+ * `<position>MaxWithSubs` total confirmed players of that position (regulars +
+ * subs combined) rather than stopping at the normal target, since you're already
+ * reaching out to the bench.
+ *
+ * Safe to call after any status change — it's a no-op (and marks the game Full)
+ * once nothing more is currently actionable.
  */
 export async function fillNextSub(gameId: number) {
   const game = await prisma.game.findUnique({
@@ -60,14 +71,25 @@ export async function fillNextSub(gameId: number) {
   });
   if (!game) throw new Error("Game not found");
 
-  const confirmed = game.availabilities.filter((a) => a.status === "Yes" || a.status === "AddedAsSub");
+  const confirmedCountFor = (position: Position) =>
+    game.availabilities.filter((a) => (a.status === "Yes" || a.status === "AddedAsSub") && a.player.position === position).length;
 
-  const countFor = (position: Position) => confirmed.filter((a) => a.player.position === position).length;
+  const regularDeclinedCountFor = (position: Position) =>
+    game.availabilities.filter((a) => a.playerType === "Regular" && a.status === "No" && a.player.position === position).length;
+
+  const defenceDeclined = regularDeclinedCountFor("Defence");
+  const forwardDeclined = regularDeclinedCountFor("Forward");
 
   const openSpots: Record<Position, number> = {
-    Goalie: Math.max(0, game.goalieRequirement - countFor("Goalie")),
-    Defence: Math.max(0, game.defenceRequirement - countFor("Defence")),
-    Forward: Math.max(0, game.forwardRequirement - countFor("Forward")),
+    Goalie: Math.max(0, game.goalieRequirement - confirmedCountFor("Goalie")),
+    Defence:
+      defenceDeclined >= game.defenceDeclineThreshold
+        ? Math.max(0, game.defenceMaxWithSubs - confirmedCountFor("Defence"))
+        : 0,
+    Forward:
+      forwardDeclined >= game.forwardDeclineThreshold
+        ? Math.max(0, game.forwardMaxWithSubs - confirmedCountFor("Forward"))
+        : 0,
   };
 
   const totalOpen = openSpots.Goalie + openSpots.Defence + openSpots.Forward;
@@ -81,8 +103,8 @@ export async function fillNextSub(gameId: number) {
   const gameDateText = game.gameDate.toLocaleDateString();
 
   // Goalie spots take priority — a game with no goalie is a bigger problem than
-  // being one skater short. Between Defence and Forward, whichever is checked
-  // first here just breaks ties when both happen to be short in the same call.
+  // being short a skater. Between Defence and Forward, whichever is checked
+  // first here just breaks ties when both happen to need filling in the same call.
   for (const position of ["Goalie", "Defence", "Forward"] as Position[]) {
     if (openSpots[position] === 0) continue;
 
