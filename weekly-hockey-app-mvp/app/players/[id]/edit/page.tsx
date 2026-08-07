@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import DeletePlayerButton from "@/components/DeletePlayerButton";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,9 @@ export default async function EditPlayer({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const player = await prisma.player.findUnique({ where: { id: Number(id) } });
+  const playerId = Number(id);
+
+  const player = await prisma.player.findUnique({ where: { id: playerId } });
   if (!player) notFound();
 
   return (
@@ -57,6 +60,11 @@ export default async function EditPlayer({
             Save changes
           </button>
         </form>
+      </div>
+
+      <div className="card">
+        <h2>Delete player</h2>
+        <DeletePlayerButton playerId={player.id} playerName={`${player.firstName} ${player.lastName}`} />
       </div>
     </main>
   );

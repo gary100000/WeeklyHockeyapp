@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const failed: string[] = [];
 
   for (const player of players) {
-    const body = `🏒 Hockey this ${game.gameDate.toLocaleDateString("en-CA", { weekday: "long" })} at ${game.gameTime} at ${game.arena.name}.\n\nAre you playing?\n\nReply YES or NO.`;
+    const body = `🏒 Hockey ${game.gameDate.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })} at ${game.gameTime} at ${game.arena.name}.\n\nAre you playing?\n\nReply YES or NO.`;
 
     try {
       const sms = await sendSms(player.mobileNumber, body);
