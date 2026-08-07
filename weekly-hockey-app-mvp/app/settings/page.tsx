@@ -19,8 +19,7 @@ export default async function Settings() {
             <p>Arena: {s.arena?.name}</p>
             <p>Address: {s.arena?.address}</p>
             <p>Default game: {s.defaultGameDay} · {s.defaultGameTime}</p>
-            <p>Maximum players: {s.maximumPlayers}</p>
-            <p>Goalies required: {s.goalieRequirement}</p>
+            <p>Roster size: {s.maximumPlayers} ({s.goalieRequirement}G / {s.defenceRequirement}D / {s.forwardRequirement}F)</p>
             <p>Response deadline: {s.responseDeadline}</p>
             <p>Reminder: {s.reminderTime}</p>
             <p>No-response treated as No: {s.finalDeadlineTreatNo ? "Yes" : "No"}</p>

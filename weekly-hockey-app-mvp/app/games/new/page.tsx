@@ -45,16 +45,18 @@ export default async function NewGame({
 
   let suggestedDate = nextDateForDay(settings.defaultGameDay);
   let suggestedTime = settings.defaultGameTime;
-  let suggestedMax = settings.maximumPlayers;
   let suggestedGoalies = settings.goalieRequirement;
+  let suggestedDefence = settings.defenceRequirement;
+  let suggestedForward = settings.forwardRequirement;
 
   if (copying && lastGame) {
     const nextWeek = new Date(lastGame.gameDate);
     nextWeek.setDate(nextWeek.getDate() + 7);
     suggestedDate = nextWeek.toISOString().slice(0, 10);
     suggestedTime = parseTime12h(lastGame.gameTime);
-    suggestedMax = lastGame.maximumPlayers;
     suggestedGoalies = lastGame.goalieRequirement;
+    suggestedDefence = lastGame.defenceRequirement;
+    suggestedForward = lastGame.forwardRequirement;
   }
 
   return (
@@ -81,7 +83,8 @@ export default async function NewGame({
         {copying && lastGame && (
           <p style={{ fontSize: 13, opacity: 0.75, marginBottom: 14 }}>
             Prefilled from {lastGame.gameDate.toLocaleDateString("en-CA")} — {lastGame.gameTime},{" "}
-            {lastGame.maximumPlayers} players, {lastGame.goalieRequirement} goalies. Adjust below if needed.
+            {lastGame.goalieRequirement}G / {lastGame.defenceRequirement}D / {lastGame.forwardRequirement}F.
+            Adjust below if needed.
           </p>
         )}
 
@@ -98,16 +101,6 @@ export default async function NewGame({
             required
           />
 
-          <label>Maximum players</label>
-          <input
-            className="input"
-            type="number"
-            min={1}
-            name="maximumPlayers"
-            defaultValue={suggestedMax}
-            required
-          />
-
           <label>Goalies required</label>
           <input
             className="input"
@@ -115,6 +108,26 @@ export default async function NewGame({
             min={0}
             name="goalieRequirement"
             defaultValue={suggestedGoalies}
+            required
+          />
+
+          <label>Defence required</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="defenceRequirement"
+            defaultValue={suggestedDefence}
+            required
+          />
+
+          <label>Forwards required</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            name="forwardRequirement"
+            defaultValue={suggestedForward}
             required
           />
 

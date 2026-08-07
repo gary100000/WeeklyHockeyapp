@@ -11,8 +11,9 @@ type FormState = {
   arenaAddress: string;
   defaultGameDay: string;
   defaultGameTime: string;
-  maximumPlayers: string;
   goalieRequirement: string;
+  defenceRequirement: string;
+  forwardRequirement: string;
   responseDeadline: string;
   reminderTime: string;
   finalDeadlineTreatNo: boolean;
@@ -29,8 +30,9 @@ const DEFAULTS: FormState = {
   arenaAddress: "",
   defaultGameDay: "Wednesday",
   defaultGameTime: "20:00",
-  maximumPlayers: "18",
   goalieRequirement: "1",
+  defenceRequirement: "6",
+  forwardRequirement: "11",
   responseDeadline: "24 hours before game",
   reminderTime: "48 hours before game",
   finalDeadlineTreatNo: true,
@@ -47,10 +49,19 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  const totalPlayers =
+    (Number(form.goalieRequirement) || 0) + (Number(form.defenceRequirement) || 0) + (Number(form.forwardRequirement) || 0);
+
   function validateStep(i: number) {
     if (i === 0) return form.teamName.trim() && form.adminName.trim() && form.adminMobileNumber.trim();
     if (i === 1) return form.arenaName.trim() && form.arenaAddress.trim();
-    if (i === 2) return Number(form.maximumPlayers) > 0 && Number(form.goalieRequirement) >= 0;
+    if (i === 2)
+      return (
+        Number(form.goalieRequirement) >= 0 &&
+        Number(form.defenceRequirement) >= 0 &&
+        Number(form.forwardRequirement) >= 0 &&
+        totalPlayers > 0
+      );
     if (i === 3) return form.responseDeadline.trim() && form.reminderTime.trim();
     return true;
   }
@@ -186,14 +197,6 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
               value={form.defaultGameTime}
               onChange={(e) => update("defaultGameTime", e.target.value)}
             />
-            <label>Maximum players</label>
-            <input
-              type="number"
-              min={1}
-              className="input"
-              value={form.maximumPlayers}
-              onChange={(e) => update("maximumPlayers", e.target.value)}
-            />
             <label>Goalies required</label>
             <input
               type="number"
@@ -202,6 +205,25 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
               value={form.goalieRequirement}
               onChange={(e) => update("goalieRequirement", e.target.value)}
             />
+            <label>Defence required</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.defenceRequirement}
+              onChange={(e) => update("defenceRequirement", e.target.value)}
+            />
+            <label>Forwards required</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.forwardRequirement}
+              onChange={(e) => update("forwardRequirement", e.target.value)}
+            />
+            <p style={{ fontSize: 13, opacity: 0.75, marginTop: 4 }}>
+              Total roster size: <b>{totalPlayers}</b> players
+            </p>
           </section>
         )}
 
@@ -241,8 +263,10 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
             <div className="row"><span>Arena</span><b>{form.arenaName || "—"}</b></div>
             <div className="row"><span>Address</span><b>{form.arenaAddress || "—"}</b></div>
             <div className="row"><span>Game day/time</span><b>{form.defaultGameDay} · {form.defaultGameTime}</b></div>
-            <div className="row"><span>Max players</span><b>{form.maximumPlayers}</b></div>
             <div className="row"><span>Goalies required</span><b>{form.goalieRequirement}</b></div>
+            <div className="row"><span>Defence required</span><b>{form.defenceRequirement}</b></div>
+            <div className="row"><span>Forwards required</span><b>{form.forwardRequirement}</b></div>
+            <div className="row"><span>Total roster size</span><b>{totalPlayers}</b></div>
             <div className="row"><span>Response deadline</span><b>{form.responseDeadline}</b></div>
             <div className="row"><span>Reminder</span><b>{form.reminderTime}</b></div>
             <div className="row"><span>No-response treated as No</span><b>{form.finalDeadlineTreatNo ? "Yes" : "No"}</b></div>

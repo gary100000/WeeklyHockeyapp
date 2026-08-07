@@ -10,8 +10,9 @@ const setupSchema = z.object({
   arenaAddress: z.string().min(1),
   defaultGameDay: z.string().min(1),
   defaultGameTime: z.string().min(1),
-  maximumPlayers: z.coerce.number().int().positive(),
   goalieRequirement: z.coerce.number().int().min(0),
+  defenceRequirement: z.coerce.number().int().min(0),
+  forwardRequirement: z.coerce.number().int().min(0),
   responseDeadline: z.string().min(1),
   reminderTime: z.string().min(1),
   finalDeadlineTreatNo: z.boolean(),
@@ -31,6 +32,13 @@ export async function POST(req: Request) {
     );
   }
   const data = parsed.data;
+  const totalPlayers = data.goalieRequirement + data.defenceRequirement + data.forwardRequirement;
+  if (totalPlayers <= 0) {
+    return NextResponse.json(
+      { error: "Total roster size must be greater than zero." },
+      { status: 400 }
+    );
+  }
 
   // Single-arena assumption for v1: reuse the existing arena if settings already exist,
   // otherwise create a new one.
@@ -51,8 +59,10 @@ export async function POST(req: Request) {
     adminMobileNumber: data.adminMobileNumber,
     defaultGameDay: data.defaultGameDay,
     defaultGameTime: data.defaultGameTime,
-    maximumPlayers: data.maximumPlayers,
+    maximumPlayers: totalPlayers,
     goalieRequirement: data.goalieRequirement,
+    defenceRequirement: data.defenceRequirement,
+    forwardRequirement: data.forwardRequirement,
     responseDeadline: data.responseDeadline,
     reminderTime: data.reminderTime,
     finalDeadlineTreatNo: data.finalDeadlineTreatNo,

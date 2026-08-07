@@ -16,8 +16,8 @@ export default async function Subs() {
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <p style={{ marginTop: -8, marginBottom: 16, opacity: 0.75, fontSize: 14 }}>
-        This is the order subs get contacted when a spot opens up. Use ↑/↓ to reorder, or add new
-        substitutes from the Players page.
+        Subs are grouped by position. Use ↑/↓ to reorder within a group, or add new substitutes
+        from the Players page.
       </p>
       <SubsPriorityList initialSubs={subs} />
     </main>

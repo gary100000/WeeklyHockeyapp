@@ -38,17 +38,32 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   const existingSub = await prisma.substitute.findUnique({ where: { playerId } });
+  const existingPlayer = await prisma.player.findUnique({ where: { id: playerId } });
+  const positionChanged = existingPlayer && existingPlayer.position !== data.position;
 
   await prisma.player.update({ where: { id: playerId }, data });
 
-  // Keep the Substitute table in sync with playerType changes.
+  // Keep the Substitute table in sync with playerType changes, and keep priority
+  // numbers scoped to the player's current position group.
   if (data.playerType === "Substitute" && !existingSub) {
-    const maxPriority = await prisma.substitute.aggregate({ _max: { priority: true } });
+    const maxPriority = await prisma.substitute.aggregate({
+      _max: { priority: true },
+      where: { player: { position: data.position } },
+    });
     await prisma.substitute.create({
       data: { playerId, priority: (maxPriority._max.priority ?? 0) + 1 },
     });
   } else if (data.playerType === "Regular" && existingSub) {
     await prisma.substitute.delete({ where: { playerId } });
+  } else if (data.playerType === "Substitute" && existingSub && positionChanged) {
+    const maxPriority = await prisma.substitute.aggregate({
+      _max: { priority: true },
+      where: { player: { position: data.position } },
+    });
+    await prisma.substitute.update({
+      where: { playerId },
+      data: { priority: (maxPriority._max.priority ?? 0) + 1 },
+    });
   }
 
   return NextResponse.redirect(new URL("/players", req.url));

@@ -80,6 +80,8 @@ model TeamSettings {
   defaultGameTime      String
   maximumPlayers       Int
   goalieRequirement    Int
+  defenceRequirement   Int     @default(0)
+  forwardRequirement   Int     @default(0)
   responseDeadline     String
   reminderTime         String
   finalDeadlineTreatNo Boolean @default(false)
@@ -91,14 +93,16 @@ model TeamSettings {
 }
 
 model Game {
-  id                Int        @id @default(autoincrement())
-  gameDate          DateTime
-  gameTime          String
-  arenaId           Int
-  maximumPlayers    Int
-  goalieRequirement Int
-  status            GameStatus @default(Draft)
-  createdAt         DateTime   @default(now())
+  id                 Int        @id @default(autoincrement())
+  gameDate           DateTime
+  gameTime           String
+  arenaId            Int
+  maximumPlayers     Int
+  goalieRequirement  Int
+  defenceRequirement Int        @default(0)
+  forwardRequirement Int        @default(0)
+  status             GameStatus @default(Draft)
+  createdAt          DateTime   @default(now())
 
   arena          Arena              @relation(fields: [arenaId], references: [id])
   availabilities GameAvailability[]

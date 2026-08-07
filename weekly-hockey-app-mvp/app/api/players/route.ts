@@ -35,7 +35,10 @@ export async function POST(req: Request) {
   const player = await prisma.player.create({ data });
 
   if (data.playerType === "Substitute") {
-    const maxPriority = await prisma.substitute.aggregate({ _max: { priority: true } });
+    const maxPriority = await prisma.substitute.aggregate({
+      _max: { priority: true },
+      where: { player: { position: data.position } },
+    });
     await prisma.substitute.create({
       data: { playerId: player.id, priority: (maxPriority._max.priority ?? 0) + 1 },
     });

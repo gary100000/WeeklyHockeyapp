@@ -5,8 +5,9 @@ import { prisma } from "@/lib/prisma";
 const gameSchema = z.object({
   gameDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
   gameTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time"),
-  maximumPlayers: z.coerce.number().int().positive(),
   goalieRequirement: z.coerce.number().int().min(0),
+  defenceRequirement: z.coerce.number().int().min(0),
+  forwardRequirement: z.coerce.number().int().min(0),
 });
 
 function formatTime12h(hhmm: string) {
@@ -23,8 +24,9 @@ export async function POST(req: Request) {
   const parsed = gameSchema.safeParse({
     gameDate: form.get("gameDate"),
     gameTime: form.get("gameTime"),
-    maximumPlayers: form.get("maximumPlayers"),
     goalieRequirement: form.get("goalieRequirement"),
+    defenceRequirement: form.get("defenceRequirement"),
+    forwardRequirement: form.get("forwardRequirement"),
   });
 
   if (!parsed.success) {
@@ -32,6 +34,12 @@ export async function POST(req: Request) {
     return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
   }
   const data = parsed.data;
+
+  const totalPlayers = data.goalieRequirement + data.defenceRequirement + data.forwardRequirement;
+  if (totalPlayers <= 0) {
+    const message = encodeURIComponent("Total roster size must be greater than zero.");
+    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+  }
 
   const settings = await prisma.teamSettings.findUnique({ where: { id: 1 } });
   if (!settings?.arenaId) {
@@ -43,8 +51,10 @@ export async function POST(req: Request) {
       gameDate: new Date(`${data.gameDate}T00:00:00.000Z`),
       gameTime: formatTime12h(data.gameTime),
       arenaId: settings.arenaId,
-      maximumPlayers: data.maximumPlayers,
+      maximumPlayers: totalPlayers,
       goalieRequirement: data.goalieRequirement,
+      defenceRequirement: data.defenceRequirement,
+      forwardRequirement: data.forwardRequirement,
       status: "Draft",
     },
   });

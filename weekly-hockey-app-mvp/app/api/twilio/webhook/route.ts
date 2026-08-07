@@ -56,17 +56,10 @@ export async function POST(req: NextRequest) {
     await sendSms(from, "You're in! 🏒 See you at the game.");
   }
 
-  const confirmed = await prisma.gameAvailability.count({
-    where: { gameId: game.id, status: { in: ["Yes", "AddedAsSub"] } },
-  });
-
-  if (confirmed >= game.maximumPlayers) {
-    await prisma.game.update({ where: { id: game.id }, data: { status: "Full" } });
-  } else if (player.playerType === "Substitute" && no) {
-    await fillNextSub(game.id);
-  } else if (player.playerType === "Regular" && (yes || no)) {
-    await fillNextSub(game.id);
-  }
+  // Re-check the roster after every processed reply. fillNextSub recomputes
+  // goalie/skater shortfalls from scratch and is a safe no-op once both are covered,
+  // so it's correct to call unconditionally here rather than only for specific cases.
+  await fillNextSub(game.id);
 
   return new NextResponse("OK");
 }

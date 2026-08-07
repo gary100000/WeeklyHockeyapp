@@ -10,9 +10,16 @@ type Sub = {
     id: number;
     firstName: string;
     lastName: string;
-    position: string;
+    position: "Goalie" | "Defence" | "Forward";
     active: boolean;
   };
+};
+
+const POSITION_ORDER: Array<Sub["player"]["position"]> = ["Goalie", "Defence", "Forward"];
+const POSITION_LABELS: Record<Sub["player"]["position"], string> = {
+  Goalie: "Goalies",
+  Defence: "Defence",
+  Forward: "Forwards",
 };
 
 export default function SubsPriorityList({ initialSubs }: { initialSubs: Sub[] }) {
@@ -20,15 +27,26 @@ export default function SubsPriorityList({ initialSubs }: { initialSubs: Sub[] }
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  function move(index: number, direction: -1 | 1) {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= subs.length) return;
+  function groupFor(position: Sub["player"]["position"]) {
+    return subs
+      .filter((s) => s.player.position === position)
+      .sort((a, b) => a.priority - b.priority);
+  }
 
-    const reordered = [...subs];
-    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
-    // Renumber priorities to match the new order (1-based, sequential).
-    const withPriorities = reordered.map((s, i) => ({ ...s, priority: i + 1 }));
-    setSubs(withPriorities);
+  function move(sub: Sub, direction: -1 | 1) {
+    const group = groupFor(sub.player.position);
+    const idx = group.findIndex((s) => s.id === sub.id);
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= group.length) return;
+    const other = group[targetIdx];
+
+    // Swap just these two priority values — reordering stays scoped to this position group.
+    const updated = subs.map((s) => {
+      if (s.id === sub.id) return { ...s, priority: other.priority };
+      if (s.id === other.id) return { ...s, priority: sub.priority };
+      return s;
+    });
+    setSubs(updated);
     setError(null);
 
     startTransition(async () => {
@@ -37,7 +55,10 @@ export default function SubsPriorityList({ initialSubs }: { initialSubs: Sub[] }
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            order: withPriorities.map((s) => ({ id: s.id, priority: s.priority })),
+            order: [
+              { id: sub.id, priority: other.priority },
+              { id: other.id, priority: sub.priority },
+            ],
           }),
         });
         if (!res.ok) throw new Error("Failed to save new order.");
@@ -79,51 +100,66 @@ export default function SubsPriorityList({ initialSubs }: { initialSubs: Sub[] }
   }
 
   return (
-    <div className="card">
-      {error && <p className="red" style={{ marginBottom: 10 }}>{error}</p>}
-      {subs.map((s, i) => (
-        <div className="row" key={s.id}>
-          <div>
-            <b>{i + 1}. {s.player.firstName} {s.player.lastName}</b>
-            <div style={{ fontSize: 13, opacity: 0.75 }}>
-              {s.player.position}
-              {!s.player.active && " · player inactive"}
-              {!s.active && " · paused"}
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            <button
-              className="button"
-              type="button"
-              onClick={() => move(i, -1)}
-              disabled={i === 0 || isPending}
-              style={{ padding: "9px 12px" }}
-              aria-label="Move up"
-            >
-              ↑
-            </button>
-            <button
-              className="button"
-              type="button"
-              onClick={() => move(i, 1)}
-              disabled={i === subs.length - 1 || isPending}
-              style={{ padding: "9px 12px" }}
-              aria-label="Move down"
-            >
-              ↓
-            </button>
-            <button
-              className="button"
-              type="button"
-              onClick={() => togglePause(s.id)}
-              disabled={isPending}
-              style={{ padding: "9px 12px" }}
-            >
-              {s.active ? "Pause" : "Resume"}
-            </button>
-          </div>
+    <>
+      {error && (
+        <div className="card" style={{ borderColor: "#f87171" }}>
+          <p className="red" style={{ margin: 0 }}>{error}</p>
         </div>
-      ))}
-    </div>
+      )}
+      {POSITION_ORDER.map((position) => {
+        const group = groupFor(position);
+        return (
+          <div className="card" key={position}>
+            <h2 style={{ marginTop: 0 }}>{POSITION_LABELS[position]}</h2>
+            {group.length === 0 && (
+              <p style={{ opacity: 0.6, fontSize: 14 }}>No substitute {POSITION_LABELS[position].toLowerCase()} yet.</p>
+            )}
+            {group.map((s, i) => (
+              <div className="row" key={s.id}>
+                <div>
+                  <b>{i + 1}. {s.player.firstName} {s.player.lastName}</b>
+                  <div style={{ fontSize: 13, opacity: 0.75 }}>
+                    {!s.player.active && "player inactive"}
+                    {!s.player.active && !s.active && " · "}
+                    {!s.active && "paused"}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <button
+                    className="button"
+                    type="button"
+                    onClick={() => move(s, -1)}
+                    disabled={i === 0 || isPending}
+                    style={{ padding: "9px 12px" }}
+                    aria-label="Move up"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    className="button"
+                    type="button"
+                    onClick={() => move(s, 1)}
+                    disabled={i === group.length - 1 || isPending}
+                    style={{ padding: "9px 12px" }}
+                    aria-label="Move down"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    className="button"
+                    type="button"
+                    onClick={() => togglePause(s.id)}
+                    disabled={isPending}
+                    style={{ padding: "9px 12px" }}
+                  >
+                    {s.active ? "Pause" : "Resume"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </>
   );
 }
