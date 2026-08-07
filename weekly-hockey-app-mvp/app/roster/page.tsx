@@ -8,6 +8,7 @@ export default async function Roster() {
  const groups=[["Yes","green"],["AddedAsSub","blue"],["No","red"],["Waiting","yellow"]];
  return <main className="shell"><div className="top"><h1>Roster</h1><a href="/" className="button" style={{textDecoration:"none"}}>Dashboard</a></div>
  <div className="card"><h2>{game.gameDate.toLocaleDateString()} · {game.availabilities.filter(a=>a.status==="Yes"||a.status==="AddedAsSub").length}/{game.maximumPlayers}</h2>
+ <a href="/api/roster/pdf" className="button primary" style={{textDecoration:"none",display:"inline-block",marginBottom:14}}>⬇ Download PDF</a>
  {groups.map(([status,cls])=><section key={status}><h3 className={cls}>{status==="AddedAsSub"?"SUBS":status==="Yes"?"PLAYING":status.toUpperCase()}</h3>
  {game.availabilities.filter(a=>a.status===status).map(a=><div className="row" key={a.id}><span>{a.player.firstName} {a.player.lastName} — {a.player.position}</span><span className={cls}>{status}</span></div>)}</section>)}
  </div></main>
