@@ -8,6 +8,7 @@ const playerSchema = z.object({
   mobileNumber: z.string().regex(/^\+[1-9]\d{6,14}$/, "Use E.164 format, e.g. +15195551234"),
   playerType: z.enum(["Regular", "Substitute"]),
   position: z.enum(["Forward", "Defence", "Goalie"]),
+  country: z.enum(["US", "CA"]),
 });
 
 export async function POST(req: Request) {
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
     mobileNumber: form.get("mobileNumber"),
     playerType: form.get("playerType"),
     position: form.get("position"),
+    country: form.get("country"),
   });
 
   if (!parsed.success) {

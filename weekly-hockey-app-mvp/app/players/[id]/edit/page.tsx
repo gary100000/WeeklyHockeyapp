@@ -56,6 +56,15 @@ export default async function EditPlayer({
             <option value="Goalie">Goalie</option>
           </select>
 
+          <label>Country</label>
+          <select className="input" name="country" defaultValue={player.country}>
+            <option value="CA">Canada</option>
+            <option value="US">USA</option>
+          </select>
+          <p style={{ fontSize: 12, opacity: 0.65, marginTop: -6, marginBottom: 4 }}>
+            Determines which Twilio number texts this player.
+          </p>
+
           <button className="button primary" type="submit" style={{ marginTop: 12 }}>
             Save changes
           </button>

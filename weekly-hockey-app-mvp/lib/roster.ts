@@ -1,10 +1,10 @@
 import { prisma } from "./prisma";
-import { sendSms } from "./sms";
+import { sendSms, type PlayerCountry } from "./sms";
 
 type SubCandidate = {
   playerId: number;
   priority: number;
-  player: { id: number; firstName: string; lastName: string; mobileNumber: string };
+  player: { id: number; firstName: string; lastName: string; mobileNumber: string; country: PlayerCountry };
 };
 
 async function contactCandidate(
@@ -15,10 +15,10 @@ async function contactCandidate(
   arenaName: string
 ) {
   for (const sub of candidates) {
-    const body = `🏒 A spot is available for hockey ${gameDateText} at ${gameTime} at ${arenaName}.\n\nAre you available?\n\nReply YES or NO.`;
+    const body = `A spot is available for hockey ${gameDateText} at ${gameTime} at ${arenaName}.\n\nAre you available?\n\nReply YES or NO.`;
 
     try {
-      const sms = await sendSms(sub.player.mobileNumber, body);
+      const sms = await sendSms(sub.player.mobileNumber, body, sub.player.country);
 
       await prisma.gameAvailability.create({
         data: {

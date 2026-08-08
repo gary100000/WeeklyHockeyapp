@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const no = ["NO", "N", "NOPE", "OUT"].includes(body);
 
   if (!yes && !no) {
-    await sendSms(from, "Sorry, I didn't understand. Please reply YES or NO.");
+    await sendSms(from, "Sorry, I didn't understand. Please reply YES or NO.", player.country);
     return new NextResponse("OK");
   }
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (isConfirmedSub) {
-    await sendSms(from, "You're in! 🏒 See you at the game.");
+    await sendSms(from, "You're in! See you at the game.", player.country);
   }
 
   // Re-check the roster after every processed reply. fillNextSub recomputes

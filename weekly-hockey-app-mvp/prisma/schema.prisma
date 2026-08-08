@@ -12,6 +12,11 @@ enum PlayerType {
   Substitute
 }
 
+enum PlayerCountry {
+  US
+  CA
+}
+
 enum Position {
   Forward
   Defence
@@ -47,6 +52,7 @@ model Player {
   mobileNumber   String
   playerType     PlayerType
   position       Position
+  country        PlayerCountry       @default(CA)
   active         Boolean             @default(true)
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt

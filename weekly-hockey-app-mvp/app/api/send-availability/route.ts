@@ -12,10 +12,10 @@ export async function POST(req: Request) {
   const failed: string[] = [];
 
   for (const player of players) {
-    const body = `🏒 Hockey ${game.gameDate.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })} at ${game.gameTime} at ${game.arena.name}.\n\nAre you playing?\n\nReply YES or NO.`;
+    const body = `Hockey ${game.gameDate.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" })} at ${game.gameTime} at ${game.arena.name}.\n\nAre you playing?\n\nReply YES or NO.`;
 
     try {
-      const sms = await sendSms(player.mobileNumber, body);
+      const sms = await sendSms(player.mobileNumber, body, player.country);
       await prisma.gameAvailability.upsert({
         where: { gameId_playerId: { gameId: game.id, playerId: player.id } },
         update: { status: "Waiting", smsMessageId: sms.sid, contactedAt: new Date() },

@@ -16,8 +16,8 @@ export default async function MigratePage({
       <div className="card">
         {sp.result === "success" && (
           <p className="green">
-            ✅ Done — all pending columns (position requirements and sub rules) are now on your
-            database. You can delete this page and its API route from the code now (
+            ✅ Done — all pending columns (position requirements, sub rules, and player country)
+            are now on your database. You can delete this page and its API route from the code now (
             <code>app/admin/migrate</code> and <code>app/api/admin/migrate</code>).
           </p>
         )}

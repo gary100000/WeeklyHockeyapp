@@ -43,6 +43,15 @@ export default async function NewPlayer({
             <option value="Goalie">Goalie</option>
           </select>
 
+          <label>Country</label>
+          <select className="input" name="country" defaultValue="CA">
+            <option value="CA">Canada</option>
+            <option value="US">USA</option>
+          </select>
+          <p style={{ fontSize: 12, opacity: 0.65, marginTop: -6, marginBottom: 4 }}>
+            Determines which Twilio number texts this player.
+          </p>
+
           <button className="button primary" type="submit" style={{ marginTop: 12 }}>
             Add player
           </button>

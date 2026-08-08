@@ -25,7 +25,7 @@ export default async function Players() {
             <div>
               <b>{p.firstName} {p.lastName}</b>
               <div style={{ fontSize: 13, opacity: 0.75 }}>
-                {p.position} · {p.playerType} · {p.mobileNumber}
+                {p.position} · {p.playerType} · {p.mobileNumber} · {p.country}
               </div>
             </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>

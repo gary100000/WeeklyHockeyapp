@@ -14,6 +14,12 @@ const statements = [
   `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "defenceMaxWithSubs" INTEGER NOT NULL DEFAULT 8;`,
   `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "forwardDeclineThreshold" INTEGER NOT NULL DEFAULT 4;`,
   `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "forwardMaxWithSubs" INTEGER NOT NULL DEFAULT 14;`,
+  `DO $$ BEGIN
+     CREATE TYPE "PlayerCountry" AS ENUM ('US', 'CA');
+   EXCEPTION
+     WHEN duplicate_object THEN null;
+   END $$;`,
+  `ALTER TABLE "Player" ADD COLUMN IF NOT EXISTS "country" "PlayerCountry" NOT NULL DEFAULT 'CA';`,
 ];
 
 export async function POST(req: Request) {
