@@ -69,10 +69,24 @@ function sections(teamName: string): Section[] {
       ],
     },
     {
-      heading: "Roster & PDF Export",
+      heading: "Roster & Manual Overrides",
       paragraphs: [
-        "The Roster page shows everyone associated with the current game, grouped by status: Playing (broken down by position), Waiting, and Not Playing.",
-        "Download PDF produces a printable sheet with checkboxes next to each confirmed player for check-in at the rink, everyone's phone number, and your team logo — useful to have on hand at the door.",
+        "The Roster page shows everyone associated with the current game, grouped by status: Playing (broken down by position), Subs, Waiting, Not Playing, and Removed.",
+        `Every row has an Edit button. Tapping it reveals a dropdown so you can change that player's status by hand — useful when someone tells you in person or by phone rather than by text. Changing someone to No triggers the exact same substitute-fill check an SMS reply would, so overriding a regular to No can immediately text the next substitute in line.`,
+        `There's also an "Add to roster" section for active players who haven't been texted or responded yet, letting you slot someone directly onto the list with any status.`,
+      ],
+    },
+    {
+      heading: "Roster PDF Export",
+      paragraphs: [
+        "Download PDF (on the Roster page) produces a printable sheet with checkboxes next to each confirmed player for check-in at the rink, everyone's phone number, and your team logo — useful to have on hand at the door.",
+      ],
+    },
+    {
+      heading: "Custom Messages",
+      paragraphs: [
+        `The Message page (in the main navigation) lets you send a one-off text outside the normal YES/NO flow — for announcements like fees, rink changes, or anything else. Pick recipients with the All / Regulars only / Subs only buttons or by checking individual players, write your text, and send.`,
+        "This is completely separate from the automated system: it doesn't touch any game's roster, doesn't count as a response, and never triggers the substitute-fill engine. It's for talking to your team, not for managing availability.",
       ],
     },
     {
@@ -84,7 +98,7 @@ function sections(teamName: string): Section[] {
     {
       heading: "Wrapping Up a Game",
       paragraphs: [
-        "From the Dashboard or Roster page, open Edit Game and mark it Complete once it's been played, or Cancelled if it falls through. This matters because the app always treats your most recently created, still-open game as \"the current game\" — closing one out cleanly means the next one you create takes over properly.",
+        "From the Dashboard, open Edit Game and mark it Complete once it's been played, or Cancelled if it falls through. This matters because the app always treats your most recently created, still-open game as \"the current game\" — closing one out cleanly means the next one you create takes over properly.",
       ],
     },
     {

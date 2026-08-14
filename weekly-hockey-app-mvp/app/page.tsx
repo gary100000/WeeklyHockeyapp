@@ -101,9 +101,11 @@ export default async function Home({
         <form action="/api/send-availability" method="post"><button className="button primary">SEND AVAILABILITY</button></form>
       )}
       <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:10}}>
-        <a href="/games/new" className="button" style={{textDecoration:"none"}}>+ Create next week's game</a>
         <a href={`/games/${game.id}/edit`} className="button" style={{textDecoration:"none"}}>Edit this game</a>
       </div>
+    </section>
+    <section className="card">
+      <a href="/games/new" className="button primary" style={{textDecoration:"none",display:"inline-block"}}>+ Create next week's game</a>
     </section>
   </main>;
 }
