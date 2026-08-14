@@ -26,6 +26,8 @@ const statements = [
   `ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "reminderSentAt" TIMESTAMP(3);`,
   `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "responseDeadlineHours" INTEGER NOT NULL DEFAULT 24;`,
   `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "reminderHours" INTEGER NOT NULL DEFAULT 48;`,
+  `ALTER TABLE "TeamSettings" DROP COLUMN IF EXISTS "responseDeadline";`,
+  `ALTER TABLE "TeamSettings" DROP COLUMN IF EXISTS "reminderTime";`,
 ];
 
 export async function POST(req: Request) {
