@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
+import RosterEditor from "@/components/RosterEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +12,6 @@ export default async function Roster() {
     include: { arena: true, availabilities: { include: { player: true } } },
   });
   if (!game) return <main className="shell"><h1>No game</h1></main>;
-
-  const groups: [string, string][] = [["Yes", "green"], ["AddedAsSub", "blue"], ["No", "red"], ["Waiting", "yellow"]];
 
   const confirmedFor = (position: string) =>
     game.availabilities.filter((a) => (a.status === "Yes" || a.status === "AddedAsSub") && a.player.position === position).length;
@@ -25,6 +24,12 @@ export default async function Roster() {
     { label: "Forward", short: Math.max(0, game.forwardRequirement - confirmedFor("Forward")) },
   ].filter((s) => s.short > 0);
 
+  const listedPlayerIds = game.availabilities.map((a) => a.player.id);
+  const unlistedPlayers = await prisma.player.findMany({
+    where: { active: true, id: { notIn: listedPlayerIds } },
+    orderBy: [{ playerType: "asc" }, { lastName: "asc" }],
+  });
+
   return (
     <main className="shell">
       <div className="top">
@@ -34,6 +39,7 @@ export default async function Roster() {
         </div>
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
+
       <div className="card">
         <h2>{game.gameDate.toLocaleDateString()} · {game.availabilities.filter(a => a.status === "Yes" || a.status === "AddedAsSub").length}/{game.maximumPlayers}</h2>
         <p style={{ fontSize: 13, opacity: 0.75, marginTop: -4 }}>
@@ -44,19 +50,15 @@ export default async function Roster() {
             </span>
           )}
         </p>
-        {groups.map(([status, cls]) => (
-          <section key={status}>
-            <h3 className={cls}>{status === "AddedAsSub" ? "SUBS" : status === "Yes" ? "PLAYING" : status.toUpperCase()}</h3>
-            {game.availabilities.filter(a => a.status === status).map(a => (
-              <div className="row" key={a.id}>
-                <span>{a.player.firstName} {a.player.lastName} — {a.player.position}</span>
-                <span className={cls}>{status}</span>
-              </div>
-            ))}
-          </section>
-        ))}
       </div>
-      <a href="/api/roster/pdf" className="button primary" style={{ textDecoration: "none", display: "inline-block" }}>⬇ Download PDF</a>
+
+      <RosterEditor
+        gameId={game.id}
+        availabilities={game.availabilities}
+        unlistedPlayers={unlistedPlayers}
+      />
+
+      <a href="/api/roster/pdf" className="button primary" style={{ textDecoration: "none", display: "inline-block", marginTop: 16 }}>⬇ Download PDF</a>
     </main>
   );
 }
