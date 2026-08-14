@@ -17,8 +17,8 @@ const setupSchema = z.object({
   defenceMaxWithSubs: z.coerce.number().int().min(0),
   forwardDeclineThreshold: z.coerce.number().int().min(0),
   forwardMaxWithSubs: z.coerce.number().int().min(0),
-  responseDeadline: z.string().min(1),
-  reminderTime: z.string().min(1),
+  responseDeadlineHours: z.coerce.number().int().positive(),
+  reminderHours: z.coerce.number().int().positive(),
   finalDeadlineTreatNo: z.boolean(),
 });
 
@@ -83,8 +83,8 @@ export async function POST(req: Request) {
     defenceMaxWithSubs: data.defenceMaxWithSubs,
     forwardDeclineThreshold: data.forwardDeclineThreshold,
     forwardMaxWithSubs: data.forwardMaxWithSubs,
-    responseDeadline: data.responseDeadline,
-    reminderTime: data.reminderTime,
+    responseDeadlineHours: data.responseDeadlineHours,
+    reminderHours: data.reminderHours,
     finalDeadlineTreatNo: data.finalDeadlineTreatNo,
     arenaId: arena.id,
   };

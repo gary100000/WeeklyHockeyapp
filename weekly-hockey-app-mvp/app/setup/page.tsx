@@ -25,8 +25,8 @@ export default async function SetupPage() {
         defenceMaxWithSubs: String(settings.defenceMaxWithSubs),
         forwardDeclineThreshold: String(settings.forwardDeclineThreshold),
         forwardMaxWithSubs: String(settings.forwardMaxWithSubs),
-        responseDeadline: settings.responseDeadline,
-        reminderTime: settings.reminderTime,
+        responseDeadlineHours: String(settings.responseDeadlineHours),
+        reminderHours: String(settings.reminderHours),
         finalDeadlineTreatNo: settings.finalDeadlineTreatNo,
       }
     : undefined;

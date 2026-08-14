@@ -22,9 +22,9 @@ export default async function Settings() {
             <p>Roster size: {s.maximumPlayers} ({s.goalieRequirement}G / {s.defenceRequirement}D / {s.forwardRequirement}F)</p>
             <p>Defence subs: after {s.defenceDeclineThreshold} decline(s), up to {s.defenceMaxWithSubs} total</p>
             <p>Forward subs: after {s.forwardDeclineThreshold} decline(s), up to {s.forwardMaxWithSubs} total</p>
-            <p>Response deadline: {s.responseDeadline}</p>
-            <p>Reminder: {s.reminderTime}</p>
-            <p>No-response treated as No: {s.finalDeadlineTreatNo ? "Yes" : "No"}</p>
+            <p>Response deadline: {s.responseDeadlineHours}h before game (silent cutoff, no text sent)</p>
+            <p>Reminder: {s.reminderHours}h before game (texts only players still waiting)</p>
+            <p>No-response treated as No at deadline: {s.finalDeadlineTreatNo ? "Yes" : "No"}</p>
             <a href="/setup" className="button primary" style={{ display: "inline-block", marginTop: 12, textDecoration: "none" }}>
               Edit setup
             </a>

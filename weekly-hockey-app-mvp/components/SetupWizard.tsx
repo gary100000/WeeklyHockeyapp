@@ -18,18 +18,13 @@ type FormState = {
   defenceMaxWithSubs: string;
   forwardDeclineThreshold: string;
   forwardMaxWithSubs: string;
-  responseDeadline: string;
-  reminderTime: string;
+  responseDeadlineHours: string;
+  reminderHours: string;
   finalDeadlineTreatNo: boolean;
 };
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const STEPS = ["Team", "Arena", "Game defaults", "Sub rules", "Response rules", "Review"];
-
-function parseHours(value: string, fallback: number): number {
-  const match = value.match(/(\d+)/);
-  return match ? parseInt(match[1], 10) : fallback;
-}
 
 const DEFAULTS: FormState = {
   teamName: "",
@@ -46,8 +41,8 @@ const DEFAULTS: FormState = {
   defenceMaxWithSubs: "8",
   forwardDeclineThreshold: "4",
   forwardMaxWithSubs: "14",
-  responseDeadline: "24 hours before game",
-  reminderTime: "48 hours before game",
+  responseDeadlineHours: "24",
+  reminderHours: "48",
   finalDeadlineTreatNo: true,
 };
 
@@ -102,7 +97,7 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
       return null;
     }
     if (i === 4) {
-      if (!form.responseDeadline.trim() || !form.reminderTime.trim()) {
+      if (Number(form.responseDeadlineHours) <= 0 || Number(form.reminderHours) <= 0) {
         return "Please fill in all fields on this step before continuing.";
       }
       return null;
@@ -341,8 +336,8 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
                 className="button"
                 style={{ padding: "10px 16px" }}
                 onClick={() => {
-                  const hours = Math.max(1, parseHours(form.responseDeadline, 24) - 1);
-                  update("responseDeadline", `${hours} hours before game`);
+                  const hours = Math.max(1, Number(form.responseDeadlineHours) - 1);
+                  update("responseDeadlineHours", String(hours));
                 }}
                 aria-label="Decrease response deadline"
               >
@@ -357,15 +352,15 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
                   textAlign: "center",
                 }}
               >
-                {parseHours(form.responseDeadline, 24)}h
+                {form.responseDeadlineHours}h
               </div>
               <button
                 type="button"
                 className="button"
                 style={{ padding: "10px 16px" }}
                 onClick={() => {
-                  const hours = Math.min(336, parseHours(form.responseDeadline, 24) + 1);
-                  update("responseDeadline", `${hours} hours before game`);
+                  const hours = Math.min(336, Number(form.responseDeadlineHours) + 1);
+                  update("responseDeadlineHours", String(hours));
                 }}
                 aria-label="Increase response deadline"
               >
@@ -381,8 +376,8 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
                 className="button"
                 style={{ padding: "10px 16px" }}
                 onClick={() => {
-                  const hours = Math.max(1, parseHours(form.reminderTime, 48) - 1);
-                  update("reminderTime", `${hours} hours before game`);
+                  const hours = Math.max(1, Number(form.reminderHours) - 1);
+                  update("reminderHours", String(hours));
                 }}
                 aria-label="Decrease reminder time"
               >
@@ -397,15 +392,15 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
                   textAlign: "center",
                 }}
               >
-                {parseHours(form.reminderTime, 48)}h
+                {form.reminderHours}h
               </div>
               <button
                 type="button"
                 className="button"
                 style={{ padding: "10px 16px" }}
                 onClick={() => {
-                  const hours = Math.min(336, parseHours(form.reminderTime, 48) + 1);
-                  update("reminderTime", `${hours} hours before game`);
+                  const hours = Math.min(336, Number(form.reminderHours) + 1);
+                  update("reminderHours", String(hours));
                 }}
                 aria-label="Increase reminder time"
               >
@@ -413,6 +408,11 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
               </button>
               <span style={{ fontSize: 13, opacity: 0.7 }}>hours before game</span>
             </div>
+
+            <p style={{ fontSize: 13, opacity: 0.7, marginTop: -4, marginBottom: 10 }}>
+              The reminder texts only players who haven&apos;t responded yet — no text ever goes
+              out for the deadline itself, it's a silent cutoff.
+            </p>
 
             <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
               <input
@@ -439,8 +439,8 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
             <div className="row"><span>Total roster size</span><b>{totalPlayers}</b></div>
             <div className="row"><span>Defence sub threshold</span><b>{form.defenceDeclineThreshold} decline(s) → up to {form.defenceMaxWithSubs} total</b></div>
             <div className="row"><span>Forward sub threshold</span><b>{form.forwardDeclineThreshold} decline(s) → up to {form.forwardMaxWithSubs} total</b></div>
-            <div className="row"><span>Response deadline</span><b>{form.responseDeadline}</b></div>
-            <div className="row"><span>Reminder</span><b>{form.reminderTime}</b></div>
+            <div className="row"><span>Response deadline</span><b>{form.responseDeadlineHours}h before game</b></div>
+            <div className="row"><span>Reminder</span><b>{form.reminderHours}h before game</b></div>
             <div className="row"><span>No-response treated as No</span><b>{form.finalDeadlineTreatNo ? "Yes" : "No"}</b></div>
           </section>
         )}

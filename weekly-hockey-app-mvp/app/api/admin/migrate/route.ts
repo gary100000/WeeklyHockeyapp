@@ -20,6 +20,12 @@ const statements = [
      WHEN duplicate_object THEN null;
    END $$;`,
   `ALTER TABLE "Player" ADD COLUMN IF NOT EXISTS "country" "PlayerCountry" NOT NULL DEFAULT 'CA';`,
+  `ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "responseDeadlineHours" INTEGER NOT NULL DEFAULT 24;`,
+  `ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "reminderHours" INTEGER NOT NULL DEFAULT 48;`,
+  `ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "finalDeadlineTreatNo" BOOLEAN NOT NULL DEFAULT false;`,
+  `ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "reminderSentAt" TIMESTAMP(3);`,
+  `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "responseDeadlineHours" INTEGER NOT NULL DEFAULT 24;`,
+  `ALTER TABLE "TeamSettings" ADD COLUMN IF NOT EXISTS "reminderHours" INTEGER NOT NULL DEFAULT 48;`,
 ];
 
 export async function POST(req: Request) {

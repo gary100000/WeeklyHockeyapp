@@ -12,6 +12,9 @@ const gameSchema = z.object({
   defenceMaxWithSubs: z.coerce.number().int().min(0),
   forwardDeclineThreshold: z.coerce.number().int().min(0),
   forwardMaxWithSubs: z.coerce.number().int().min(0),
+  responseDeadlineHours: z.coerce.number().int().positive(),
+  reminderHours: z.coerce.number().int().positive(),
+  finalDeadlineTreatNo: z.boolean(),
 });
 
 function formatTime12h(hhmm: string) {
@@ -35,6 +38,9 @@ export async function POST(req: Request) {
     defenceMaxWithSubs: form.get("defenceMaxWithSubs"),
     forwardDeclineThreshold: form.get("forwardDeclineThreshold"),
     forwardMaxWithSubs: form.get("forwardMaxWithSubs"),
+    responseDeadlineHours: form.get("responseDeadlineHours"),
+    reminderHours: form.get("reminderHours"),
+    finalDeadlineTreatNo: form.get("finalDeadlineTreatNo") === "on",
   });
 
   if (!parsed.success) {
@@ -75,6 +81,9 @@ export async function POST(req: Request) {
       defenceMaxWithSubs: data.defenceMaxWithSubs,
       forwardDeclineThreshold: data.forwardDeclineThreshold,
       forwardMaxWithSubs: data.forwardMaxWithSubs,
+      responseDeadlineHours: data.responseDeadlineHours,
+      reminderHours: data.reminderHours,
+      finalDeadlineTreatNo: data.finalDeadlineTreatNo,
       status: "Draft",
     },
   });

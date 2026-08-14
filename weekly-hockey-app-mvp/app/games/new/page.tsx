@@ -52,6 +52,9 @@ export default async function NewGame({
   let suggestedDefenceMax = settings.defenceMaxWithSubs;
   let suggestedForwardThreshold = settings.forwardDeclineThreshold;
   let suggestedForwardMax = settings.forwardMaxWithSubs;
+  let suggestedResponseDeadline = settings.responseDeadlineHours;
+  let suggestedReminder = settings.reminderHours;
+  let suggestedTreatNo = settings.finalDeadlineTreatNo;
 
   if (copying && lastGame) {
     const nextWeek = new Date(lastGame.gameDate);
@@ -65,6 +68,9 @@ export default async function NewGame({
     suggestedDefenceMax = lastGame.defenceMaxWithSubs;
     suggestedForwardThreshold = lastGame.forwardDeclineThreshold;
     suggestedForwardMax = lastGame.forwardMaxWithSubs;
+    suggestedResponseDeadline = lastGame.responseDeadlineHours;
+    suggestedReminder = lastGame.reminderHours;
+    suggestedTreatNo = lastGame.finalDeadlineTreatNo;
   }
 
   return (
@@ -182,6 +188,37 @@ export default async function NewGame({
             defaultValue={suggestedForwardMax}
             required
           />
+
+          <p style={{ fontSize: 13, fontWeight: 700, marginTop: 18, marginBottom: 4 }}>Response rules</p>
+          <p style={{ fontSize: 13, opacity: 0.75, marginTop: 0, marginBottom: 10 }}>
+            The reminder texts only players who haven&apos;t responded yet. No text ever goes out
+            for the deadline itself — it&apos;s a silent cutoff, only applied if the checkbox below is on.
+          </p>
+
+          <label>Response deadline (hours before game)</label>
+          <input
+            className="input"
+            type="number"
+            min={1}
+            name="responseDeadlineHours"
+            defaultValue={suggestedResponseDeadline}
+            required
+          />
+
+          <label>Reminder (hours before game)</label>
+          <input
+            className="input"
+            type="number"
+            min={1}
+            name="reminderHours"
+            defaultValue={suggestedReminder}
+            required
+          />
+
+          <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+            <input type="checkbox" name="finalDeadlineTreatNo" defaultChecked={suggestedTreatNo} />
+            Treat no-response as &quot;No&quot; once the deadline passes
+          </label>
 
           <button className="button primary" type="submit" style={{ marginTop: 12 }}>
             Create game

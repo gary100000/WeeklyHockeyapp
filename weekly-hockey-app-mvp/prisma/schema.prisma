@@ -92,8 +92,8 @@ model TeamSettings {
   defenceMaxWithSubs      Int     @default(8)
   forwardDeclineThreshold Int     @default(4)
   forwardMaxWithSubs      Int     @default(14)
-  responseDeadline        String
-  reminderTime            String
+  responseDeadlineHours   Int     @default(24)
+  reminderHours           Int     @default(48)
   finalDeadlineTreatNo    Boolean @default(false)
   adminName               String
   adminMobileNumber       String
@@ -115,6 +115,10 @@ model Game {
   defenceMaxWithSubs      Int        @default(8)
   forwardDeclineThreshold Int        @default(4)
   forwardMaxWithSubs      Int        @default(14)
+  responseDeadlineHours   Int        @default(24)
+  reminderHours           Int        @default(48)
+  finalDeadlineTreatNo    Boolean    @default(false)
+  reminderSentAt          DateTime?
   status                  GameStatus @default(Draft)
   createdAt               DateTime   @default(now())
 
