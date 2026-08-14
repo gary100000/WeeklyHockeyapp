@@ -22,7 +22,7 @@ export default async function Home({
 
     return <main className="shell">
       <header className="top"><div className="brand" style={{display:"flex",alignItems:"center",gap:8}}><Image src="/logo.png" alt="Team logo" width={28} height={28} /> Weekly Hockey</div><nav className="nav">
-        <a href="/" className="button">Dashboard</a><a href="/players" className="button">Players</a><a href="/subs" className="button">Subs</a><a href="/settings" className="button">Settings</a>
+        <a href="/" className="button">Dashboard</a><a href="/players" className="button">Players</a><a href="/subs" className="button">Subs</a><a href="/messages/new" className="button">Message</a><a href="/settings" className="button">Settings</a>
         <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
       </nav></header>
       <section className="card hero">
@@ -64,7 +64,7 @@ export default async function Home({
 
   return <main className="shell">
     <header className="top"><div className="brand" style={{display:"flex",alignItems:"center",gap:8}}><Image src="/logo.png" alt="Team logo" width={28} height={28} /> Weekly Hockey</div><nav className="nav">
-      <a href="/" className="button">Dashboard</a><a href="/roster" className="button">Roster</a><a href="/players" className="button">Players</a><a href="/subs" className="button">Subs</a><a href="/settings" className="button">Settings</a>
+      <a href="/" className="button">Dashboard</a><a href="/roster" className="button">Roster</a><a href="/players" className="button">Players</a><a href="/subs" className="button">Subs</a><a href="/messages/new" className="button">Message</a><a href="/settings" className="button">Settings</a>
       <form action="/api/logout" method="post" style={{display:"inline"}}><button className="button" type="submit" style={{padding:"9px 12px"}}>Log out</button></form>
     </nav></header>
     {sp.smsError && <section className="card" style={{borderColor:"var(--goal-red)"}}><p className="red" style={{margin:0}}>{sp.smsError}</p></section>}
