@@ -10,10 +10,13 @@ export default async function LoginPage({
 
   return (
     <main className="shell">
-      <section className="card hero" style={{ textAlign: "center" }}>
-        <Image src="/logo.png" alt="Team logo" width={96} height={96} style={{ marginBottom: 8 }} priority />
-        <div style={{ opacity: 0.75 }}>WEEKLY HOCKEY</div>
-        <h1>Admin Login</h1>
+      <section
+        className="card hero"
+        style={{ textAlign: "center", maxWidth: 380, margin: "60px auto 0" }}
+      >
+        <Image src="/logo.png" alt="Team logo" width={88} height={88} style={{ marginBottom: 10 }} priority />
+        <div style={{ opacity: 0.75, fontSize: 13, marginBottom: 2 }}>WEEKLY HOCKEY</div>
+        <h1 style={{ marginBottom: 16 }}>Admin Login</h1>
         {sp.error && <p className="red">Incorrect password.</p>}
         <form action={action} method="post">
           <input
@@ -24,7 +27,7 @@ export default async function LoginPage({
             className="input"
             required
           />
-          <button className="button primary" type="submit" style={{ marginTop: 12 }}>
+          <button className="button primary" type="submit" style={{ marginTop: 12, width: "100%" }}>
             Log in
           </button>
         </form>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifySessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 export const config = {
-  matcher: ["/((?!login|api/login|api/twilio|api/cron|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!login|api/login|api/twilio|api/cron|_next/static|_next/image|favicon.ico|logo.png).*)"],
 };
 
 export async function middleware(req: NextRequest) {
