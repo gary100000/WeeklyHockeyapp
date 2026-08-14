@@ -56,44 +56,52 @@ export async function POST(req: Request) {
     );
   }
 
-  // Single-arena assumption for v1: reuse the existing arena if settings already exist,
-  // otherwise create a new one.
-  const existingSettings = await prisma.teamSettings.findUnique({ where: { id: 1 } });
+  try {
+    // Single-arena assumption for v1: reuse the existing arena if settings already exist,
+    // otherwise create a new one.
+    const existingSettings = await prisma.teamSettings.findUnique({ where: { id: 1 } });
 
-  const arena = existingSettings?.arenaId
-    ? await prisma.arena.update({
-        where: { id: existingSettings.arenaId },
-        data: { name: data.arenaName, address: data.arenaAddress },
-      })
-    : await prisma.arena.create({
-        data: { name: data.arenaName, address: data.arenaAddress },
-      });
+    const arena = existingSettings?.arenaId
+      ? await prisma.arena.update({
+          where: { id: existingSettings.arenaId },
+          data: { name: data.arenaName, address: data.arenaAddress },
+        })
+      : await prisma.arena.create({
+          data: { name: data.arenaName, address: data.arenaAddress },
+        });
 
-  const settingsData = {
-    teamName: data.teamName,
-    adminName: data.adminName,
-    adminMobileNumber: data.adminMobileNumber,
-    defaultGameDay: data.defaultGameDay,
-    defaultGameTime: data.defaultGameTime,
-    maximumPlayers: totalPlayers,
-    goalieRequirement: data.goalieRequirement,
-    defenceRequirement: data.defenceRequirement,
-    forwardRequirement: data.forwardRequirement,
-    defenceDeclineThreshold: data.defenceDeclineThreshold,
-    defenceMaxWithSubs: data.defenceMaxWithSubs,
-    forwardDeclineThreshold: data.forwardDeclineThreshold,
-    forwardMaxWithSubs: data.forwardMaxWithSubs,
-    responseDeadlineHours: data.responseDeadlineHours,
-    reminderHours: data.reminderHours,
-    finalDeadlineTreatNo: data.finalDeadlineTreatNo,
-    arenaId: arena.id,
-  };
+    const settingsData = {
+      teamName: data.teamName,
+      adminName: data.adminName,
+      adminMobileNumber: data.adminMobileNumber,
+      defaultGameDay: data.defaultGameDay,
+      defaultGameTime: data.defaultGameTime,
+      maximumPlayers: totalPlayers,
+      goalieRequirement: data.goalieRequirement,
+      defenceRequirement: data.defenceRequirement,
+      forwardRequirement: data.forwardRequirement,
+      defenceDeclineThreshold: data.defenceDeclineThreshold,
+      defenceMaxWithSubs: data.defenceMaxWithSubs,
+      forwardDeclineThreshold: data.forwardDeclineThreshold,
+      forwardMaxWithSubs: data.forwardMaxWithSubs,
+      responseDeadlineHours: data.responseDeadlineHours,
+      reminderHours: data.reminderHours,
+      finalDeadlineTreatNo: data.finalDeadlineTreatNo,
+      arenaId: arena.id,
+    };
 
-  await prisma.teamSettings.upsert({
-    where: { id: 1 },
-    update: settingsData,
-    create: { id: 1, ...settingsData },
-  });
+    await prisma.teamSettings.upsert({
+      where: { id: 1 },
+      update: settingsData,
+      create: { id: 1, ...settingsData },
+    });
+  } catch (err: any) {
+    console.error("Failed to save setup:", err);
+    return NextResponse.json(
+      { error: `Database error: ${err?.message || String(err)}` },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }
