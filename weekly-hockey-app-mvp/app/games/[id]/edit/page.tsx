@@ -29,7 +29,7 @@ export default async function EditGame({
           <Image src="/logo.png" alt="Team logo" width={28} height={28} />
           <h1>Edit Game</h1>
         </div>
-        <a href="/roster" className="button" style={{ textDecoration: "none" }}>Roster</a>
+        <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
 
       <div className="card">

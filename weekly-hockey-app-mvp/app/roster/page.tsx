@@ -32,10 +32,7 @@ export default async function Roster() {
           <Image src="/logo.png" alt="Team logo" width={32} height={32} />
           <h1>Roster</h1>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <a href={`/games/${game.id}/edit`} className="button" style={{ textDecoration: "none" }}>Edit Game</a>
-          <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
-        </div>
+        <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">
         <h2>{game.gameDate.toLocaleDateString()} · {game.availabilities.filter(a => a.status === "Yes" || a.status === "AddedAsSub").length}/{game.maximumPlayers}</h2>
