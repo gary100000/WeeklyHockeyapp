@@ -42,6 +42,16 @@ export default async function Settings() {
           </>
         )}
       </div>
+      <div className="card">
+        <h2>App Manual</h2>
+        <p style={{ fontSize: 13, opacity: 0.75, marginBottom: 10 }}>
+          A printable guide covering every feature — Setup, Players, Substitutes, Games, how the
+          automatic texting and reminders work, and what each game status means.
+        </p>
+        <a href="/api/manual/pdf" className="button primary" style={{ display: "inline-block", textDecoration: "none" }}>
+          ⬇ Download App Manual (PDF)
+        </a>
+      </div>
     </main>
   );
 }

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
+import fs from "fs";
+import path from "path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,7 +33,24 @@ export async function GET() {
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
   let page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  const firstPage = page;
   let y = PAGE_HEIGHT - MARGIN;
+
+  try {
+    const logoBytes = fs.readFileSync(path.join(process.cwd(), "public", "logo.png"));
+    const logoImage = await pdfDoc.embedPng(logoBytes);
+    const logoSize = 46;
+    const logoDims = logoImage.scale(logoSize / logoImage.width);
+    firstPage.drawImage(logoImage, {
+      x: PAGE_WIDTH - MARGIN - logoDims.width,
+      y: PAGE_HEIGHT - MARGIN - logoDims.height + 14,
+      width: logoDims.width,
+      height: logoDims.height,
+    });
+  } catch (err) {
+    // Don't fail the whole PDF just because the logo couldn't be embedded.
+    console.error("Failed to embed logo in roster PDF:", err);
+  }
 
   function drawLine(
     text: string,
