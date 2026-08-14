@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import SubsPriorityList from "@/components/SubsPriorityList";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,10 @@ export default async function Subs() {
   return (
     <main className="shell">
       <div className="top">
-        <h1>Substitute Priority</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Substitute Priority</h1>
+        </div>
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <p style={{ marginTop: -8, marginBottom: 16, opacity: 0.75, fontSize: 14 }}>

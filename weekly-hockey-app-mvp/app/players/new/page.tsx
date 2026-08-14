@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default async function NewPlayer({
   searchParams,
 }: {
@@ -8,7 +10,10 @@ export default async function NewPlayer({
   return (
     <main className="shell">
       <div className="top">
-        <h1>Add Player</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Add Player</h1>
+        </div>
         <a href="/players" className="button" style={{ textDecoration: "none" }}>Players</a>
       </div>
       <div className="card">

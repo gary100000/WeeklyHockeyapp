@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { fillNextSub } from "@/lib/roster";
 import { sendSms } from "@/lib/sms";
+import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
   const player = await prisma.player.findFirst({ where: { mobileNumber: from, active: true } });
   if (!player) return new NextResponse("Unknown number", { status: 404 });
 
-  const game = await prisma.game.findFirst({ orderBy: { createdAt: "desc" } });
+  const game = await prisma.game.findFirst({ where: CURRENT_GAME_WHERE, orderBy: { createdAt: "desc" } });
   if (!game) return new NextResponse("No active game", { status: 404 });
 
   // Log every incoming message, even ones we can't parse, so nothing is silently dropped.

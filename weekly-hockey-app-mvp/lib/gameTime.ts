@@ -31,3 +31,19 @@ export function combineDateAndTime(date: Date, timeDisplay: string): Date {
   combined.setUTCHours(hour, minute, 0, 0);
   return combined;
 }
+
+/** Converts a 24-hour "HH:MM" string (from an <input type="time">) into "8:00 PM" style display. */
+export function formatTime12h(hhmm: string): string {
+  const [hStr, mStr] = hhmm.split(":");
+  let h = parseInt(hStr, 10);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${mStr} ${ampm}`;
+}
+
+/** Converts a "8:00 PM" style display string back into 24-hour "HH:MM" for an <input type="time">. */
+export function parse12hTo24h(display: string): string {
+  const { hour, minute } = parseTime12hToParts(display);
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}

@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { sendSms } from "@/lib/sms";
+import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const game = await prisma.game.findFirst({ orderBy: { createdAt: "desc" }, include: { arena: true } });
+  const game = await prisma.game.findFirst({ where: CURRENT_GAME_WHERE, orderBy: { createdAt: "desc" }, include: { arena: true } });
   if (!game) return NextResponse.json({ error: "No game" }, { status: 404 });
 
   const players = await prisma.player.findMany({ where: { active: true, playerType: "Regular" } });

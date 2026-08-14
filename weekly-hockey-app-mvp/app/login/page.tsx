@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default async function LoginPage({
   searchParams,
 }: {
@@ -8,7 +10,8 @@ export default async function LoginPage({
 
   return (
     <main className="shell">
-      <section className="card hero">
+      <section className="card hero" style={{ textAlign: "center" }}>
+        <Image src="/logo.png" alt="Team logo" width={96} height={96} style={{ marginBottom: 8 }} priority />
         <div style={{ opacity: 0.75 }}>WEEKLY HOCKEY</div>
         <h1>Admin Login</h1>
         {sp.error && <p className="red">Incorrect password.</p>}

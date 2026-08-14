@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type FormState = {
   teamName: string;
@@ -152,7 +153,10 @@ export default function SetupWizard({ initialData }: { initialData?: Partial<For
   return (
     <main className="shell">
       <div className="top">
-        <h1>Setup Wizard</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Setup Wizard</h1>
+        </div>
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">

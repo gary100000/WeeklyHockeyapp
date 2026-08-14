@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendSms } from "@/lib/sms";
 import { fillNextSub } from "@/lib/roster";
 import { combineDateAndTime } from "@/lib/gameTime";
+import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export async function GET(req: Request) {
   }
 
   const game = await prisma.game.findFirst({
+    where: CURRENT_GAME_WHERE,
     orderBy: { createdAt: "desc" },
     include: { arena: true, availabilities: { include: { player: true } } },
   });

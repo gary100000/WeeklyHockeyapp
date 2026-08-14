@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { CURRENT_GAME_WHERE } from "@/lib/currentGame";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ const MARGIN = 50;
 export async function GET() {
   const [game, settings] = await Promise.all([
     prisma.game.findFirst({
+      where: CURRENT_GAME_WHERE,
       orderBy: { createdAt: "desc" },
       include: { arena: true, availabilities: { include: { player: true } } },
     }),

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import DeletePlayerButton from "@/components/DeletePlayerButton";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,10 @@ export default async function EditPlayer({
   return (
     <main className="shell">
       <div className="top">
-        <h1>Edit Player</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Edit Player</h1>
+        </div>
         <a href="/players" className="button" style={{ textDecoration: "none" }}>Players</a>
       </div>
       <div className="card">

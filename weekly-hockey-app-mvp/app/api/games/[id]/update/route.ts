@@ -18,7 +18,10 @@ const gameSchema = z.object({
   finalDeadlineTreatNo: z.boolean(),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const gameId = Number(id);
+
   const form = await req.formData();
   const parsed = gameSchema.safeParse({
     gameDate: form.get("gameDate"),
@@ -37,48 +40,48 @@ export async function POST(req: Request) {
 
   if (!parsed.success) {
     const message = encodeURIComponent(parsed.error.issues[0]?.message || "Invalid game data");
-    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+    return NextResponse.redirect(new URL(`/games/${gameId}/edit?error=${message}`, req.url));
   }
   const data = parsed.data;
 
   const totalPlayers = data.goalieRequirement + data.defenceRequirement + data.forwardRequirement;
   if (totalPlayers <= 0) {
     const message = encodeURIComponent("Total roster size must be greater than zero.");
-    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+    return NextResponse.redirect(new URL(`/games/${gameId}/edit?error=${message}`, req.url));
   }
   if (data.defenceMaxWithSubs > data.defenceRequirement) {
     const message = encodeURIComponent("Defence max with subs can't be higher than Defence required.");
-    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+    return NextResponse.redirect(new URL(`/games/${gameId}/edit?error=${message}`, req.url));
   }
   if (data.forwardMaxWithSubs > data.forwardRequirement) {
     const message = encodeURIComponent("Forwards max with subs can't be higher than Forwards required.");
-    return NextResponse.redirect(new URL(`/games/new?error=${message}`, req.url));
+    return NextResponse.redirect(new URL(`/games/${gameId}/edit?error=${message}`, req.url));
   }
 
-  const settings = await prisma.teamSettings.findUnique({ where: { id: 1 } });
-  if (!settings?.arenaId) {
-    return NextResponse.redirect(new URL("/setup", req.url));
+  try {
+    await prisma.game.update({
+      where: { id: gameId },
+      data: {
+        gameDate: new Date(`${data.gameDate}T00:00:00.000Z`),
+        gameTime: formatTime12h(data.gameTime),
+        maximumPlayers: totalPlayers,
+        goalieRequirement: data.goalieRequirement,
+        defenceRequirement: data.defenceRequirement,
+        forwardRequirement: data.forwardRequirement,
+        defenceDeclineThreshold: data.defenceDeclineThreshold,
+        defenceMaxWithSubs: data.defenceMaxWithSubs,
+        forwardDeclineThreshold: data.forwardDeclineThreshold,
+        forwardMaxWithSubs: data.forwardMaxWithSubs,
+        responseDeadlineHours: data.responseDeadlineHours,
+        reminderHours: data.reminderHours,
+        finalDeadlineTreatNo: data.finalDeadlineTreatNo,
+      },
+    });
+  } catch (err: any) {
+    console.error(`Failed to update game ${gameId}:`, err);
+    const message = encodeURIComponent(`Database error: ${err?.message || String(err)}`);
+    return NextResponse.redirect(new URL(`/games/${gameId}/edit?error=${message}`, req.url));
   }
 
-  await prisma.game.create({
-    data: {
-      gameDate: new Date(`${data.gameDate}T00:00:00.000Z`),
-      gameTime: formatTime12h(data.gameTime),
-      arenaId: settings.arenaId,
-      maximumPlayers: totalPlayers,
-      goalieRequirement: data.goalieRequirement,
-      defenceRequirement: data.defenceRequirement,
-      forwardRequirement: data.forwardRequirement,
-      defenceDeclineThreshold: data.defenceDeclineThreshold,
-      defenceMaxWithSubs: data.defenceMaxWithSubs,
-      forwardDeclineThreshold: data.forwardDeclineThreshold,
-      forwardMaxWithSubs: data.forwardMaxWithSubs,
-      responseDeadlineHours: data.responseDeadlineHours,
-      reminderHours: data.reminderHours,
-      finalDeadlineTreatNo: data.finalDeadlineTreatNo,
-      status: "Draft",
-    },
-  });
-
-  return NextResponse.redirect(new URL("/", req.url));
+  return NextResponse.redirect(new URL("/roster", req.url));
 }

@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { parse12hTo24h } from "@/lib/gameTime";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -12,17 +14,6 @@ function nextDateForDay(dayName: string): string {
   const result = new Date(today);
   result.setDate(today.getDate() + diff);
   return result.toISOString().slice(0, 10);
-}
-
-function parseTime12h(display: string): string {
-  const match = display.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i);
-  if (!match) return "20:00";
-  let h = parseInt(match[1], 10);
-  const m = match[2];
-  const ampm = match[3].toUpperCase();
-  if (ampm === "PM" && h !== 12) h += 12;
-  if (ampm === "AM" && h === 12) h = 0;
-  return `${String(h).padStart(2, "0")}:${m}`;
 }
 
 export default async function NewGame({
@@ -60,7 +51,7 @@ export default async function NewGame({
     const nextWeek = new Date(lastGame.gameDate);
     nextWeek.setDate(nextWeek.getDate() + 7);
     suggestedDate = nextWeek.toISOString().slice(0, 10);
-    suggestedTime = parseTime12h(lastGame.gameTime);
+    suggestedTime = parse12hTo24h(lastGame.gameTime);
     suggestedGoalies = lastGame.goalieRequirement;
     suggestedDefence = lastGame.defenceRequirement;
     suggestedForward = lastGame.forwardRequirement;
@@ -76,7 +67,10 @@ export default async function NewGame({
   return (
     <main className="shell">
       <div className="top">
-        <h1>Create Game</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Create Game</h1>
+        </div>
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">

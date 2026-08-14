@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,10 @@ export default async function Settings() {
   return (
     <main className="shell">
       <div className="top">
-        <h1>Settings</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Image src="/logo.png" alt="Team logo" width={28} height={28} />
+          <h1>Settings</h1>
+        </div>
         <a href="/" className="button" style={{ textDecoration: "none" }}>Dashboard</a>
       </div>
       <div className="card">
